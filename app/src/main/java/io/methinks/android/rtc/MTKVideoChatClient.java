@@ -28,8 +28,9 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
-
-import static io.methinks.mtkrtc.MTKError.Domain.SessionErrorDomain;
+import static io.methinks.android.rtc.MTKConst.*;
+import static io.methinks.android.rtc.MTKError.Domain.*;
+import static io.methinks.android.rtc.MTKError.ErrorCode.*;
 
 public class MTKVideoChatClient {
     private static final String TAG = MTKVideoChatClient.class.getSimpleName();

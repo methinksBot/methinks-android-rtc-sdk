@@ -41,11 +41,8 @@ import org.webrtc.VideoSource;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.methinks.mtkrtc.MTKConst.ROOM_TYPE_APP_TEST;
-import static io.methinks.mtkrtc.MTKConst.ROOM_TYPE_INTERVIEW;
-import static io.methinks.mtkrtc.MTKError.ErrorCode.PublisherInternalError;
-import static io.methinks.mtkrtc.MTKError.ErrorCode.PublisherUnableToPublish;
-import static io.methinks.mtkrtc.MTKError.ErrorCode.PublisherWebRTCError;
+import static io.methinks.android.rtc.MTKConst.*;
+import static io.methinks.android.rtc.MTKError.ErrorCode.*;
 
 
 public class MTKPublisher extends MTKPerson{

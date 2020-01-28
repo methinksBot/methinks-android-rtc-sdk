@@ -23,8 +23,8 @@ import org.webrtc.SessionDescription;
 import org.webrtc.SurfaceViewRenderer;
 
 import java.util.ArrayList;
-
-import static io.methinks.mtkrtc.MTKError.ErrorCode.SubscriberWebRTCError;
+import static io.methinks.android.rtc.MTKConst.*;
+import static io.methinks.android.rtc.MTKError.ErrorCode.*;
 
 
 public class MTKSubscriber extends MTKPerson {
