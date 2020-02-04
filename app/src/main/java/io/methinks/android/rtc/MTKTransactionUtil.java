@@ -70,7 +70,7 @@ public class MTKTransactionUtil {
             JSONObject json = new JSONObject();
             json.put("janus", MTKTransactionType.keepalive);
             json.put("session_id", sessionId.sessionId);
-
+            Log.d("keepAlive " + json.toString());
             return send(socket, json);
         }catch (JSONException e){
             e.printStackTrace();
