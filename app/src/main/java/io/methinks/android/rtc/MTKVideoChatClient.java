@@ -16,9 +16,13 @@ import org.webrtc.MediaStream;
 import org.webrtc.PeerConnectionFactory;
 
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -255,6 +259,7 @@ public class MTKVideoChatClient {
             synchronized (this) {
                 try {
 //                    Log.e("websocket protocol receive : " + text);
+                    android.util.Log.e("mtkDebug", "websocket protocol receive : " + text);
                     JSONObject receivedJson = new JSONObject(text);
                     JSONObject data = receivedJson.has("data") ? receivedJson.getJSONObject("data") : null;
                     String receivedCommand = receivedJson.getString("janus");
@@ -366,18 +371,35 @@ public class MTKVideoChatClient {
             }
         }
     };
-
+    private Timer mTimer;
     private void sendKeepAlive(MTKVideoChatSession session){
-        new Thread(() -> {
-            while(keepAlives.get(session.sessionId)){
-                try {
-                    Thread.sleep(50000);
-                    MTKTransactionUtil.sendKeepAlive(janus, session);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+        Log.d("Start keepAlive call");
+//        new Thread(() -> {
+//            while(keepAlives.get(session.sessionId)){
+//                try {
+//                    Thread.sleep(50000);
+//                    MTKTransactionUtil.sendKeepAlive(janus, session);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }).start();
+
+        mTimer = new Timer();
+        mTimer.schedule(new CustomTimer(session), 0, 5000);
+    }
+
+    class CustomTimer extends TimerTask {
+        private MTKVideoChatSession session;
+        public CustomTimer(MTKVideoChatSession session) {
+            this.session = session;
+        }
+
+        @Override
+        public void run() {
+            Log.e("##################@@@@@@@@@!!!!!!!!!######");
+            MTKTransactionUtil.sendKeepAlive(janus, session);
+        }
     }
 
     public void sendSignal(JSONObject data){

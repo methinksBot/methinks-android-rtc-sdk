@@ -515,7 +515,7 @@ public class MTKTransactionUtil {
             }
 
 
-//            Log.e("websocket protocol send : " + json.toString());
+            android.util.Log.e("mtkDebug", "websocket protocol send : " + json.toString());
 
             socket.send(json.toString());
             transactionMap.put(transactionId, json);
