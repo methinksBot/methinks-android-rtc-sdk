@@ -125,10 +125,11 @@ public class MTKSubscriber extends MTKPerson {
             return;
         }
 
-        ArrayList<PeerConnection.IceServer> servers = new ArrayList<>();
+        /*ArrayList<PeerConnection.IceServer> servers = new ArrayList<>();
         servers.add(PeerConnection.IceServer.builder("stun:stun.l.google.com:19302").createIceServer());
 
-        PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(servers);
+        PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(servers);*/
+        PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(MTKDataStore.getInstance().iceServers);
         rtcConfig.sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN;
 
         boolean enableDataChannel = videoType == StreamVideoType.camera;

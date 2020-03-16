@@ -216,11 +216,12 @@ public class MTKPublisher extends MTKPerson{
         MTKPublisher.this.videoSend = videoSend;
 
         MTKVideoChatClient.executor.execute(() -> {
-            ArrayList<PeerConnection.IceServer> servers = new ArrayList<>();
+            /*ArrayList<PeerConnection.IceServer> servers = new ArrayList<>();
             servers.add(PeerConnection.IceServer.builder("stun:stun.l.google.com:19302").createIceServer());
 
 
-            PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(servers);
+            PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(servers);*/
+            PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(MTKDataStore.getInstance().iceServers);
             rtcConfig.sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN;
             boolean enableDataChannel = videoType == StreamVideoType.camera;
             MTKPublisher.this.pcClient = new MTKPeerConnectionClient(MTKDataStore.getInstance().context, MTKDataStore.getInstance().pcFactory, rtcConfig, MTKPublisher.this.session, enableDataChannel, true) {

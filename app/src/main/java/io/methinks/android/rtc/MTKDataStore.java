@@ -4,6 +4,7 @@ import android.content.Context;
 import android.media.projection.MediaProjection;
 
 import org.webrtc.EglBase;
+import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 
 import java.util.ArrayList;
@@ -47,9 +48,12 @@ public class MTKDataStore {
     protected String url;
     protected ArrayList<Integer> recordingPids;
 
+    protected ArrayList<PeerConnection.IceServer> iceServers;
+
     private MTKDataStore(){
         this.subscribers = new ArrayList<>();
         this.recordingPids = new ArrayList<>();
+        LazyHolder.INSTANCE.iceServers = null;
     }
 
     protected static MTKDataStore getInstance(){
