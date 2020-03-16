@@ -6,6 +6,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 
+
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.webrtc.DataChannel;
 import org.webrtc.DefaultVideoDecoderFactory;
@@ -13,31 +16,42 @@ import org.webrtc.DefaultVideoEncoderFactory;
 import org.webrtc.EglBase;
 import org.webrtc.IceCandidate;
 import org.webrtc.MediaStream;
+import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
+
 import static io.methinks.android.rtc.MTKConst.*;
 import static io.methinks.android.rtc.MTKError.Domain.*;
 import static io.methinks.android.rtc.MTKError.ErrorCode.*;
 
 public class MTKVideoChatClient {
     private static final String TAG = MTKVideoChatClient.class.getSimpleName();
+    private static final int TURN_HTTP_TIMEOUT_MS = 5000;
+    private static final String TURN_REQUEST_URL = "https://appr.tc/params";
 
     protected MTKAudioManager audioManager;
     protected WebSocket janus;
@@ -87,7 +101,42 @@ public class MTKVideoChatClient {
 
         this.listener = builder.listener;
         this.keepAlives = new HashMap<>();
+
+        // requestIceServer
+        new Thread() {
+            public void run() {
+                OkHttpClient client = new OkHttpClient();
+                Request request = new Request.Builder()
+                        .url(TURN_REQUEST_URL)
+                        .get()
+                        .build();
+                client.newCall(request).enqueue(callback);
+            }
+        }.start();
     }
+
+    private final Callback callback = new Callback() {
+        @Override
+        public void onFailure(Call call, IOException e) {
+            e.printStackTrace();
+            Log.e("Error Message: " + e.getMessage());
+        }
+        @Override
+        public void onResponse(Call call, Response response) throws IOException {
+            try {
+                String body = response.body().string();
+                Log.d("Body: " + body);
+                JSONObject roomJson = new JSONObject(body);
+                if (!roomJson.optString("ice_server_url").isEmpty()) {
+                    ArrayList<PeerConnection.IceServer> turnServers =
+                            requestTurnServers(roomJson.getString("ice_server_url"));
+                    MTKDataStore.getInstance().iceServers = turnServers;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     public void connect(){
         listener.onChangedClientState(MTKVideoChatClient.this, MTKVideoChatClientState.connecting);
@@ -371,6 +420,45 @@ public class MTKVideoChatClient {
             }
         }
     };
+
+    private ArrayList<PeerConnection.IceServer> requestTurnServers(String url)
+            throws IOException, JSONException {
+        ArrayList<PeerConnection.IceServer> turnServers = new ArrayList<>();
+        Log.d("Request TURN from: " + url);
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        connection.setDoOutput(true);
+        connection.setRequestProperty("REFERER", "https://appr.tc");
+        connection.setConnectTimeout(TURN_HTTP_TIMEOUT_MS);
+        connection.setReadTimeout(TURN_HTTP_TIMEOUT_MS);
+        int responseCode = connection.getResponseCode();
+        if (responseCode != 200) {
+            throw new IOException("Non-200 response when requesting TURN server from " + url + " : "
+                    + connection.getHeaderField(null));
+        }
+        InputStream responseStream = connection.getInputStream();
+        String response = drainStream(responseStream);
+        connection.disconnect();
+        Log.d("TURN response: " + response);
+        JSONObject responseJSON = new JSONObject(response);
+        JSONArray iceServers = responseJSON.getJSONArray("iceServers");
+        for (int i = 0; i < iceServers.length(); ++i) {
+            JSONObject server = iceServers.getJSONObject(i);
+            JSONArray turnUrls = server.getJSONArray("urls");
+            String username = server.has("username") ? server.getString("username") : "";
+            String credential = server.has("credential") ? server.getString("credential") : "";
+            for (int j = 0; j < turnUrls.length(); j++) {
+                String turnUrl = turnUrls.getString(j);
+                turnServers.add(PeerConnection.IceServer.builder(turnUrl).setUsername(username).setPassword(credential).createIceServer());
+            }
+        }
+        return turnServers;
+    }
+
+    private static String drainStream(InputStream in) {
+        Scanner s = new Scanner(in).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
+    }
+
     private Timer mTimer;
     private void sendKeepAlive(MTKVideoChatSession session){
         Log.d("Start keepAlive call");
