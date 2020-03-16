@@ -53,7 +53,6 @@ public class MTKDataStore {
     private MTKDataStore(){
         this.subscribers = new ArrayList<>();
         this.recordingPids = new ArrayList<>();
-        LazyHolder.INSTANCE.iceServers = null;
     }
 
     protected static MTKDataStore getInstance(){
@@ -96,6 +95,7 @@ public class MTKDataStore {
         LazyHolder.INSTANCE.screenSharingPublisher = null;
         LazyHolder.INSTANCE.subscribers = null;
         LazyHolder.INSTANCE.recordingPids = null;
+        LazyHolder.INSTANCE.iceServers = null;
         this.subscribers = new ArrayList<>();
         this.recordingPids = new ArrayList<>();
     }
