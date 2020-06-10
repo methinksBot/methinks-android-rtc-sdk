@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -52,32 +51,20 @@ public class MTKSubscriber extends MTKPerson {
 
             @Override
             public void onFrameResolutionChanged(int i, int i1, int degree) {
-                Log.e("$$$$$$$$", "subscriber onFrameResolutionChanged() values : " + i + "/" + i1 + "/" + degree);
+                Log.e("subscriber onFrameResolutionChanged() values : " + i + "/" + i1 + "/" + degree);
                 if(videoType == StreamVideoType.camera){
-//                    if(degree == 0 || degree == 180){   // landscape
-//                        currentRotation = Rotation.landscape;
-//                    }else{  // portrait
-//                        currentRotation = Rotation.portrait;
-//                    }
                     if(i >= i1) {
                         currentRotation = Rotation.landscape;
                     } else {
                         currentRotation = Rotation.portrait;
                     }
                 }else{
-//                    if(degree == 0 || degree == 180){   // landscape
-//                        currentRotation = Rotation.portrait;
-//                    }else{  // portrait
-//                        currentRotation = Rotation.landscape;
-//                    }
                     if(i >= i1) {
                         currentRotation = Rotation.landscape;
                     } else {
                         currentRotation = Rotation.portrait;
                     }
                 }
-
-
 
                 if(ratio != 0.0f && ratio != (float)i1 / (float)i){
                     ratio = (float)i1 / (float)i;
@@ -119,7 +106,7 @@ public class MTKSubscriber extends MTKPerson {
 
     @Override
     protected void receiveOffer(JSONObject data, String sdp, boolean audioSend, boolean videoSend) {
-        Log.e(TAG, "receiveOffer : " + data);
+        Log.e("receiveOffer : " + data);
         long id = 0;
         try {
             id = data.getLong("id");    // feed id.
@@ -130,7 +117,7 @@ public class MTKSubscriber extends MTKPerson {
         feedId = id;
         userId = MTKUtil.getUserIdForSubscriber(data);
         userName = MTKUtil.getUserNameForSubscriber(data);
-        Log.e(TAG, "receiveOffer user id : " + userId);
+        Log.e("receiveOffer user id : " + userId);
         boolean canReceiveOffer = true;
         if (MTKDataStore.getInstance().mainPublisher != null && MTKDataStore.getInstance().mainPublisher.feedId == finalId) {    // I am sharing my screen
             canReceiveOffer = false;
@@ -139,7 +126,7 @@ public class MTKSubscriber extends MTKPerson {
         }
 
         if (!canReceiveOffer) {
-            Log.e(TAG, "cannot receive offer!!");
+            Log.e("cannot receive offer!!");
             return;
         }
 
@@ -147,29 +134,19 @@ public class MTKSubscriber extends MTKPerson {
         rtcConfig.sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN;
 
         boolean enableDataChannel = videoType == StreamVideoType.camera;
-        Log.e(TAG, "enableDataChannel check : " + enableDataChannel);
+        Log.e("enableDataChannel check : " + enableDataChannel);
 
         pcClient = new MTKPeerConnectionClient(MTKDataStore.getInstance().context, MTKDataStore.getInstance().pcFactory, rtcConfig, MTKDataStore.getInstance().mainSession, enableDataChannel) {
             @Override
             public void onIceCandidate(IceCandidate iceCandidate) {
                 super.onIceCandidate(iceCandidate);
-                Log.e(TAG, "onIceCandidate()");
+                Log.e("onIceCandidate()");
                 MTKTransactionUtil.sendSDP(MTKDataStore.getInstance().client.janus, MTKDataStore.getInstance().mainSession, handleId, iceCandidate);
             }
 
-//            @Override
-//            public void onConnectionChange(PeerConnection.PeerConnectionState newState) {
-//                if (newState == PeerConnection.PeerConnectionState.DISCONNECTED) {
-//                    Log.e(TAG, "onConnectionChange() disconnected feed id : " + finalId);
-////                    Subscriber droppedSubscriber = janus.session.subscribers.get(finalId);
-////                    ((Activity)context).runOnUiThread(() -> session.sessionListener.onStreamDropped(session, droppedSubscriber.stream));
-//
-//                }
-//            }
-
             @Override
             public void onAddStream(MediaStream mediaStream) {
-                Log.e(TAG, "onAddStream()");
+                Log.e("onAddStream()");
                 if(mediaStream.videoTracks != null && mediaStream.videoTracks.size() > 0){
                     videoTrack = mediaStream.videoTracks.get(0);
                 }
@@ -185,11 +162,11 @@ public class MTKSubscriber extends MTKPerson {
                 }
 
                 if (MTKUtil.isCameraVideoType(data)) {    // If camera stream, callback session listener
-                    Log.e("screens", "111111111111111this is camera stream\n" + data.toString());
+                    Log.e("111111111111111this is camera stream\n" + data.toString());
                     videoType = StreamVideoType.camera;
 
                 } else {  // If screen stream, create new internal Subscriber.
-                    Log.e("screens", "2222222222222this is screen stream\n" + data.toString());
+                    Log.e("2222222222222this is screen stream\n" + data.toString());
                     videoType = StreamVideoType.screen;
                 }
 
@@ -203,16 +180,16 @@ public class MTKSubscriber extends MTKPerson {
                         setZOrderMediaOverlay(false);
                         MTKDataStore.getInstance().client.listener.onAddedStream(MTKDataStore.getInstance().client, mediaStream, MTKSubscriber.this, MTKDataStore.getInstance().mainSession);
 
-                        Log.e(TAG, "track check==================================================");
+                        Log.e("track check==================================================");
                         if(videoTrack != null){
-                            Log.e(TAG, "track check video track : " + videoTrack.enabled());
+                            Log.e("track check video track : " + videoTrack.enabled());
                         }else{
-                            Log.e(TAG, "track check video track is null");
+                            Log.e("track check video track is null");
                         }
                         if(audioTrack != null){
-                            Log.e(TAG, "track check audio track : " + audioTrack.enabled());
+                            Log.e("track check audio track : " + audioTrack.enabled());
                         }else{
-                            Log.e(TAG, "track check audio track is null");
+                            Log.e("track check audio track is null");
                         }
                     }
                 });
@@ -224,16 +201,16 @@ public class MTKSubscriber extends MTKPerson {
 //                    setZOrderMediaOverlay(false);
 //                    MTKDataStore.getInstance().client.listener.onAddedStream(MTKDataStore.getInstance().client, mediaStream, MTKSubscriber.this, MTKDataStore.getInstance().mainSession);
 //
-//                    Log.e(TAG, "track check==================================================");
+//                    Log.e("track check==================================================");
 //                    if(videoTrack != null){
-//                        Log.e(TAG, "track check video track : " + videoTrack.enabled());
+//                        Log.e("track check video track : " + videoTrack.enabled());
 //                    }else{
-//                        Log.e(TAG, "track check video track is null");
+//                        Log.e("track check video track is null");
 //                    }
 //                    if(audioTrack != null){
-//                        Log.e(TAG, "track check audio track : " + audioTrack.enabled());
+//                        Log.e("track check audio track : " + audioTrack.enabled());
 //                    }else{
-//                        Log.e(TAG, "track check audio track is null");
+//                        Log.e("track check audio track is null");
 //                    }
 //                });
             }
@@ -253,7 +230,7 @@ public class MTKSubscriber extends MTKPerson {
             pcClient.peerConnection.setRemoteDescription(new SdpObserver() {
                 @Override
                 public void onCreateSuccess(SessionDescription sessionDescription) {
-                    Log.e(TAG, "onCreateSuccess() : \n" + sessionDescription);
+                    Log.e("onCreateSuccess() : \n" + sessionDescription);
                 }
 
                 @Override
@@ -283,15 +260,11 @@ public class MTKSubscriber extends MTKPerson {
                                                     MTKDataStore.getInstance().client.listener.onError(MTKDataStore.getInstance().client, error);
                                                 }
                                             });
-//                                            ((Activity) MTKDataStore.getInstance().context).runOnUiThread(() -> {
-//                                                MTKError error = new MTKError(MTKError.Domain.SessionErrorDomain, SubscriberWebRTCError.getErrorCode(), "Failed creating local SDP\n" + s);
-//                                                MTKDataStore.getInstance().client.listener.onError(MTKDataStore.getInstance().client, error);
-//                                            });
                                         }
 
                                         @Override
                                         public void onSetFailure(String s) {
-                                            Log.e(TAG, "setLocalDescription onSetFailure : " + s + "\n" + sdp);
+                                            Log.e("setLocalDescription onSetFailure : " + s + "\n" + sdp);
                                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                                 @Override
                                                 public void run() {
@@ -299,10 +272,6 @@ public class MTKSubscriber extends MTKPerson {
                                                     MTKDataStore.getInstance().client.listener.onError(MTKDataStore.getInstance().client, error);
                                                 }
                                             });
-//                                            ((Activity) MTKDataStore.getInstance().context).runOnUiThread(() -> {
-//                                                MTKError error = new MTKError(MTKError.Domain.SessionErrorDomain, SubscriberWebRTCError.getErrorCode(), "Failed setting local SDP\n" + s);
-//                                                MTKDataStore.getInstance().client.listener.onError(MTKDataStore.getInstance().client, error);
-//                                            });
                                         }
                                     }, sessionDescription);
                                 });
@@ -315,7 +284,7 @@ public class MTKSubscriber extends MTKPerson {
 
                             @Override
                             public void onCreateFailure(String s) {
-                                Log.e(TAG, "createAnswer() onCreateFailure : " + s);
+                                Log.e("createAnswer() onCreateFailure : " + s);
                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                     @Override
                                     public void run() {
@@ -323,10 +292,6 @@ public class MTKSubscriber extends MTKPerson {
                                         MTKDataStore.getInstance().client.listener.onError(MTKDataStore.getInstance().client, error);
                                     }
                                 });
-//                                ((Activity) MTKDataStore.getInstance().context).runOnUiThread(() -> {
-//                                    MTKError error = new MTKError(MTKError.Domain.SessionErrorDomain, SubscriberWebRTCError.getErrorCode(), "Failed creating Answer\n" + s);
-//                                    MTKDataStore.getInstance().client.listener.onError(MTKDataStore.getInstance().client, error);
-//                                });
                             }
 
                             @Override
@@ -338,10 +303,6 @@ public class MTKSubscriber extends MTKPerson {
                                         MTKDataStore.getInstance().client.listener.onError(MTKDataStore.getInstance().client, error);
                                     }
                                 });
-//                                ((Activity) MTKDataStore.getInstance().context).runOnUiThread(() -> {
-//                                    MTKError error = new MTKError(MTKError.Domain.SessionErrorDomain, SubscriberWebRTCError.getErrorCode(), "Failed setting Answer\n" + s);
-//                                    MTKDataStore.getInstance().client.listener.onError(MTKDataStore.getInstance().client, error);
-//                                });
                             }
                         }, constraints);
                     });
@@ -356,15 +317,11 @@ public class MTKSubscriber extends MTKPerson {
                             MTKDataStore.getInstance().client.listener.onError(MTKDataStore.getInstance().client, error);
                         }
                     });
-//                    ((Activity) MTKDataStore.getInstance().context).runOnUiThread(() -> {
-//                        MTKError error = new MTKError(MTKError.Domain.SessionErrorDomain, SubscriberWebRTCError.getErrorCode(), "Failed creating remote SDP\n" + s);
-//                        MTKDataStore.getInstance().client.listener.onError(MTKDataStore.getInstance().client, error);
-//                    });
                 }
 
                 @Override
                 public void onSetFailure(String s) {
-                    Log.e(TAG, "setRemoteDescription() onSetFailure : " + s + "\n" + sdp);
+                    Log.e("setRemoteDescription() onSetFailure : " + s + "\n" + sdp);
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
@@ -372,10 +329,6 @@ public class MTKSubscriber extends MTKPerson {
                             MTKDataStore.getInstance().client.listener.onError(MTKDataStore.getInstance().client, error);
                         }
                     });
-//                    ((Activity) MTKDataStore.getInstance().context).runOnUiThread(() -> {
-//                        MTKError error = new MTKError(MTKError.Domain.SessionErrorDomain, SubscriberWebRTCError.getErrorCode(), "Failed setting remote SDP\n" + s);
-//                        MTKDataStore.getInstance().client.listener.onError(MTKDataStore.getInstance().client, error);
-//                    });
                 }
             }, new SessionDescription(SessionDescription.Type.OFFER, sdp));
         });
@@ -386,53 +339,9 @@ public class MTKSubscriber extends MTKPerson {
      * and consider isMain flag.
      */
     private void processRendererFrameWithRotation(){
-        Log.e("$$$$$$$$", " current : " + MTKUtil.getOrientation() + ", " + "subscriber's stream : " + currentRotation);
+        Log.e("current : " + MTKUtil.getOrientation() + ", " + "subscriber's stream : " + currentRotation);
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)renderer.getLayoutParams();
         int[] screenResolution = MTKUtil.getDeviceResolution();
-//        int longLength = screenResolution[0] >= screenResolution[1] ? screenResolution[0] : screenResolution[1];
-//        int shortLength = screenResolution[0] >= screenResolution[1] ? screenResolution[1] : screenResolution[0];
-
-
-
-//        if(isMain){
-//            if(currentRotation == Rotation.landscape){
-//                if(MTKUtil.getOrientation() == 0){   // current device orientation is portrait
-////                    params.width = longLength;
-////                    params.height = (int)((float)longLength * ratio);
-//                    params.width = FrameLayout.LayoutParams.WRAP_CONTENT;
-//                    params.height = FrameLayout.LayoutParams.WRAP_CONTENT;
-//                }else if(MTKUtil.getOrientation() == 90 || MTKUtil.getOrientation() == 270){ // current device orientation is landscape
-//                    params.width = longLength;
-//                    params.height = (int)((float)longLength * ratio);
-//                }
-//
-//
-//
-//
-//
-//                Log.e("######", "screen widht : " + screenResolution[0] + ", screen height : " + screenResolution[1]);
-//
-////                params.width = longLength;
-////                params.height = (int)((float)longLength * ratio);
-//            }else if(currentRotation == Rotation.portrait){
-//                if(MTKUtil.getOrientation() == 0){   // current device orientation is portrait
-//                    params.width = FrameLayout.LayoutParams.WRAP_CONTENT;
-//                    params.height = FrameLayout.LayoutParams.WRAP_CONTENT;
-//                    Log.e(TAG, "444444444444444");
-//                }else if(MTKUtil.getOrientation() == 90 || MTKUtil.getOrientation() == 270){ // current device orientation is landscape
-//                    params.width = longLength;
-//                    params.height = (int)((float)longLength * ratio);
-////                    params.width = FrameLayout.LayoutParams.WRAP_CONTENT;
-////                    params.height = FrameLayout.LayoutParams.WRAP_CONTENT;
-//                    Log.e(TAG, "555555555555");
-//                }
-//            }
-//        }else{
-//            params.width = FrameLayout.LayoutParams.WRAP_CONTENT;
-//            params.height = FrameLayout.LayoutParams.WRAP_CONTENT;
-////            params.width = FrameLayout.LayoutParams.MATCH_PARENT;
-////            params.height = FrameLayout.LayoutParams.MATCH_PARENT;
-//        }
         params.width = FrameLayout.LayoutParams.WRAP_CONTENT;
         params.height = FrameLayout.LayoutParams.WRAP_CONTENT;
         new Handler(Looper.getMainLooper()).post(() -> renderer.setLayoutParams(params));

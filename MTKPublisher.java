@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,16 +76,16 @@ public class MTKPublisher extends MTKPerson{
         for(String s : devices) {
             if(enumerator.isFrontFacing(s)) {
                 for(String deviceName : enumerator.getDeviceNames()){
-                    Log.e("deviceName", deviceName);
+                    Log.e(deviceName);
 
                     List<CameraEnumerationAndroid.CaptureFormat> captureFormats =  enumerator.getSupportedFormats(deviceName);
                     for(CameraEnumerationAndroid.CaptureFormat captureFormat : captureFormats){
-                        Log.e("deviceName", deviceName + "// width/height : " + captureFormat.width + "/" + captureFormat.height + "/" + captureFormat.frameSize());
+                        Log.e(deviceName + "// width/height : " + captureFormat.width + "/" + captureFormat.height + "/" + captureFormat.frameSize());
                     }
                 }
 
                 this.capturer = enumerator.createCapturer(s, null);
-                Log.e("deviceName", "set camera capturer : " + s);
+                Log.e("set camera capturer : " + s);
             }
             if(this.capturer != null)
                 break;
@@ -225,8 +224,10 @@ public class MTKPublisher extends MTKPerson{
                     }
                 }
 
-                Log.e(TAG, "websocket protocol subs count : " + MTKUtil.getSubscriberCountWithoutObserver());
-                if(MTKUtil.getSubscriberCountWithoutObserver() > 0) {
+                Log.e("websocket protocol subs count : " + MTKUtil.getSubscriberCountWithoutObserver());
+                if(MTKDataStore.getInstance().roomType.equals(ROOM_TYPE_INTERVIEW) && MTKUtil.getSubscriberCountWithoutObserver() > 0) {
+                    MTKTransactionUtil.requestConfigureForRecordingStart(MTKDataStore.getInstance().client.janus, MTKPublisher.this, session, MTKPublisher.this.handleId, MTKPublisher.this.audioSend, MTKPublisher.this.videoSend);
+                } else if(MTKDataStore.getInstance().roomType.equals(ROOM_TYPE_APP_TEST)){
                     MTKTransactionUtil.requestConfigureForRecordingStart(MTKDataStore.getInstance().client.janus, MTKPublisher.this, session, MTKPublisher.this.handleId, MTKPublisher.this.audioSend, MTKPublisher.this.videoSend);
                 }
 
@@ -243,7 +244,7 @@ public class MTKPublisher extends MTKPerson{
 
     @Override
     protected void offer(MTKPublisher publisher, JSONObject data, boolean audioReceive, boolean videoReceive, boolean audioSend, boolean videoSend) {
-        Log.e(TAG, "Session offer");
+        Log.e("Session offer");
         this.audioSend = audioSend;
         this.videoSend = videoSend;
 
@@ -251,19 +252,33 @@ public class MTKPublisher extends MTKPerson{
             PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(MTKDataStore.getInstance().iceServers);
             rtcConfig.sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN;
             boolean enableDataChannel = videoType == StreamVideoType.camera;
-            Log.e(TAG, "enableDataChannel check : " + enableDataChannel);
-            MTKPublisher.this.pcClient = new MTKPeerConnectionClient(MTKDataStore.getInstance().context, MTKDataStore.getInstance().pcFactory, rtcConfig, MTKPublisher.this.session, enableDataChannel) {
-                @Override
-                public void onIceCandidate(IceCandidate iceCandidate) {
-                    super.onIceCandidate(iceCandidate);
-                    MTKTransactionUtil.sendCandidate(MTKDataStore.getInstance().client.janus, MTKPublisher.this.session, MTKPublisher.this.handleId, iceCandidate);
-                }
+            Log.e("enableDataChannel check : " + enableDataChannel);
+            if (MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_BUSINESS)) {
+                MTKPublisher.this.pcClient = new MTKPeerConnectionClient(MTKDataStore.getInstance().context, MTKDataStore.getInstance().pcFactory, rtcConfig, MTKPublisher.this.session, enableDataChannel) {
+                    @Override
+                    public void onIceCandidate(IceCandidate iceCandidate) {
+                        super.onIceCandidate(iceCandidate);
+                        MTKTransactionUtil.sendCandidate(MTKDataStore.getInstance().client.janus, MTKPublisher.this.session, MTKPublisher.this.handleId, iceCandidate);
+                    }
 
-                @Override
-                public void onAddStream(MediaStream mediaStream) {
-                    Log.e(TAG, "onAddStream publisher");
-                }
-            };
+                    @Override
+                    public void onAddStream(MediaStream mediaStream) {
+                        Log.e("onAddStream publisher");
+                    }
+                };
+            } else {
+                MTKPublisher.this.pcClient = new MTKPeerConnectionClient(MTKDataStore.getInstance().context, MTKDataStore.getInstance().pcFactory, rtcConfig, MTKPublisher.this.session, enableDataChannel, true) {
+                    @Override
+                    public void onIceCandidate(IceCandidate iceCandidate) {
+                        super.onIceCandidate(iceCandidate);
+                        MTKTransactionUtil.sendCandidate(MTKDataStore.getInstance().client.janus, MTKPublisher.this.session, MTKPublisher.this.handleId, iceCandidate);
+                    }
+
+                    @Override
+                    public void onAddStream(MediaStream mediaStream) {
+                    }
+                };
+            }
 
             boolean isCamera = false;
             VideoCapturer capturer = null;
@@ -285,8 +300,8 @@ public class MTKPublisher extends MTKPerson{
             int fps = 15;
             videoSource.adaptOutputFormat(1280, 720, 720, 1280, fps); // for mtkrtc
 
-            Log.e(TAG, "resolution width : " + resolution[0] + "::: isCamera : " + isCamera);
-            Log.e(TAG, "resolution height : " + resolution[1] + "::: isCamera : " + isCamera);
+            Log.e("resolution width : " + resolution[0] + "::: isCamera : " + isCamera);
+            Log.e("resolution height : " + resolution[1] + "::: isCamera : " + isCamera);
 
 
             if(resolution[0] >= resolution[1]){ // landscape
@@ -309,8 +324,8 @@ public class MTKPublisher extends MTKPerson{
                 }
             }
 
-            Log.e(TAG, "recommended resolution width : " + resolution[0]);
-            Log.e(TAG, "recommended resolution height : " + resolution[1]);
+            Log.e("recommended resolution width : " + resolution[0]);
+            Log.e("recommended resolution height : " + resolution[1]);
 
             videoTrack = MTKDataStore.getInstance().pcFactory.createVideoTrack(MTKConst.VIDEO_TRACK_ID, videoSource);
             MTKPublisher.this.pcClient.peerConnection.addTrack(videoTrack);
@@ -328,17 +343,6 @@ public class MTKPublisher extends MTKPerson{
                     setZOrderMediaOverlay(true);
                 }
             });
-//            ((Activity)MTKDataStore.getInstance().context).runOnUiThread(() -> {
-//                if(videoTrack != null) {
-//                    if(MTKPublisher.this.videoType == StreamVideoType.camera){
-//                        videoTrack.addSink(renderer);
-//                    }else if(MTKPublisher.this.videoType == StreamVideoType.screen){
-//                        videoTrack.addSink(screenCapturer);
-//                    }
-//                    videoTrack.setEnabled(publishVideo);
-//                }
-//                setZOrderMediaOverlay(true);
-//            });
 
 
             if (audioSend) {
@@ -355,14 +359,9 @@ public class MTKPublisher extends MTKPerson{
                         }
                     }
                 });
-//                ((Activity)MTKDataStore.getInstance().context).runOnUiThread(() -> {
-//                    if(audioTrack != null) {
-//                        audioTrack.setEnabled(publishAudio);
-//                    }
-//                });
             }
 
-            Log.e(TAG, "Publisher set Stream");
+            Log.e("Publisher set Stream");
 
             MTKVideoChatClient.executor.execute(() -> {
                 MediaConstraints constraints = new MediaConstraints();
@@ -378,13 +377,13 @@ public class MTKPublisher extends MTKPerson{
                                 MTKPublisher.this.pcClient.peerConnection.setLocalDescription(new SdpObserver() {
                                     @Override
                                     public void onCreateSuccess(SessionDescription sessionDescription) {
-                                        Log.e(TAG, "offer onCreateSuccess()");
+                                        Log.e("offer onCreateSuccess()");
                                     }
 
                                     @Override
                                     public void onSetSuccess() {
-                                        Log.e(TAG, "offer onSetSuccess()");
-                                        Log.e(TAG, "subscribers count : " + MTKDataStore.getInstance().subscribers.size());
+                                        Log.e("offer onSetSuccess()");
+                                        Log.e("subscribers count : " + MTKDataStore.getInstance().subscribers.size());
 
 //                                        MTKTransactionUtil.requestConfigure(MTKDataStore.getInstance().client.janus, MTKPublisher.this, MTKPublisher.this.session, MTKPublisher.this.handleId, sessionDescription, audioSend, videoSend);
 
@@ -394,19 +393,23 @@ public class MTKPublisher extends MTKPerson{
                                             }else{
                                                 MTKTransactionUtil.requestConfigure(MTKDataStore.getInstance().client.janus, MTKPublisher.this, MTKPublisher.this.session, MTKPublisher.this.handleId, sessionDescription, audioSend, videoSend);
                                             }
-                                        }else{
-                                            if(MTKPublisher.this.videoType == StreamVideoType.camera) {
+                                        }else {
+                                            if (MTKDataStore.getInstance().mainPublisher.videoType == StreamVideoType.screen && MTKDataStore.getInstance().mainPublisher == MTKPublisher.this) {
+                                                MTKTransactionUtil.requestConfigure(MTKDataStore.getInstance().client.janus, MTKPublisher.this, MTKPublisher.this.session, MTKPublisher.this.handleId, sessionDescription, true, true);
+                                            } else if (MTKPublisher.this.videoType == StreamVideoType.camera) {
                                                 MTKTransactionUtil.requestConfigureForOffer(MTKDataStore.getInstance().client.janus, MTKPublisher.this.session, MTKPublisher.this.handleId, sessionDescription);
                                             } else {
                                                 // For mobile UX test
                                                 MTKTransactionUtil.requestConfigureForRecordingStart(MTKDataStore.getInstance().client.janus, MTKPublisher.this, MTKPublisher.this.session, MTKPublisher.this.handleId, MTKPublisher.this.audioSend, MTKPublisher.this.videoSend);
+                                                // below is from apptest-mtk-rtc.
+                                                //MTKTransactionUtil.requestConfigureForOffer(MTKDataStore.getInstance().client.janus, MTKPublisher.this.session, MTKPublisher.this.handleId, sessionDescription);
                                             }
                                         }
                                     }
 
                                     @Override
                                     public void onCreateFailure(String s) {
-                                        Log.e(TAG, "offer onCreateFailure() : " + s);
+                                        Log.e("offer onCreateFailure() : " + s);
                                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                                             @Override
                                             public void run() {
@@ -414,15 +417,11 @@ public class MTKPublisher extends MTKPerson{
                                                 MTKDataStore.getInstance().client.listener.onError(MTKDataStore.getInstance().client, error);
                                             }
                                         });
-//                                        ((Activity)MTKDataStore.getInstance().context).runOnUiThread(() -> {
-//                                            MTKError error = new MTKError(MTKError.Domain.PublisherErrorDomain, PublisherWebRTCError.getErrorCode(), "Failed creating local SDP\n" + s);
-//                                            MTKDataStore.getInstance().client.listener.onError(MTKDataStore.getInstance().client, error);
-//                                        });
                                     }
 
                                     @Override
                                     public void onSetFailure(String s) {
-                                        Log.e(TAG, "offer onSetFailure() : " + s);
+                                        Log.e("offer onSetFailure() : " + s);
                                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                                             @Override
                                             public void run() {
@@ -430,19 +429,13 @@ public class MTKPublisher extends MTKPerson{
                                                 MTKDataStore.getInstance().client.listener.onError(MTKDataStore.getInstance().client, error);
                                             }
                                         });
-//                                        ((Activity) MTKDataStore.getInstance().context).runOnUiThread(() -> {
-//                                            MTKError error = new MTKError(MTKError.Domain.PublisherErrorDomain, PublisherWebRTCError.getErrorCode(), "Failed setting local SDP\n" + s);
-//                                            MTKDataStore.getInstance().client.listener.onError(MTKDataStore.getInstance().client, error);
-//                                        });
                                     }
                                 }, new SessionDescription(sessionDescription.type, sessionDescription.description));
                         });
                     }
 
                     @Override
-                    public void onSetSuccess() {
-                        Log.e(TAG, "offer onSetSuccess()");
-                    }
+                    public void onSetSuccess() { Log.e("offer onSetSuccess()"); }
 
                     @Override
                     public void onCreateFailure(String s) {
@@ -453,10 +446,6 @@ public class MTKPublisher extends MTKPerson{
                                 MTKDataStore.getInstance().client.listener.onError(MTKDataStore.getInstance().client, error);
                             }
                         });
-//                        ((Activity) MTKDataStore.getInstance().context).runOnUiThread(() -> {
-//                            MTKError error = new MTKError(MTKError.Domain.PublisherErrorDomain, PublisherWebRTCError.getErrorCode(), "Failed creating Offer\n" + s);
-//                            MTKDataStore.getInstance().client.listener.onError(MTKDataStore.getInstance().client, error);
-//                        });
                     }
 
                     @Override
@@ -522,10 +511,6 @@ public class MTKPublisher extends MTKPerson{
                         MTKDataStore.getInstance().client.listener.onError(MTKDataStore.getInstance().client, error);
                     }
                 });
-//                ((Activity) MTKDataStore.getInstance().context).runOnUiThread(() -> {
-//                    MTKError error = new MTKError(MTKError.Domain.PublisherErrorDomain, PublisherInternalError.getErrorCode(), "Failed creating SDP object\n" + s);
-//                    MTKDataStore.getInstance().client.listener.onError(MTKDataStore.getInstance().client, error);
-//                });
             }
 
             @Override
@@ -537,10 +522,6 @@ public class MTKPublisher extends MTKPerson{
                         MTKDataStore.getInstance().client.listener.onError(MTKDataStore.getInstance().client, error);
                     }
                 });
-//                ((Activity) MTKDataStore.getInstance().context).runOnUiThread(() -> {
-//                    MTKError error = new MTKError(MTKError.Domain.PublisherErrorDomain, PublisherInternalError.getErrorCode(), "Failed setting SDP object to PeerConnection\n" + s);
-//                    MTKDataStore.getInstance().client.listener.onError(MTKDataStore.getInstance().client, error);
-//                });
             }
         }, new SessionDescription(SessionDescription.Type.ANSWER, sdp)));
     }
@@ -597,7 +578,7 @@ public class MTKPublisher extends MTKPerson{
 
     public void cycleCamera(){
         if(this.capturer == null){
-            Log.e(TAG, "Capturer is not yet initialized.");
+            Log.e("Capturer is not yet initialized.");
         }else{
             if(videoType == StreamVideoType.camera){
                 CameraVideoCapturer cvc = (CameraVideoCapturer) capturer;

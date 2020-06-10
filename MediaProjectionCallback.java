@@ -3,7 +3,6 @@ package io.methinks.android.mtkrtc;
 import android.app.Activity;
 import android.content.Context;
 import android.media.projection.MediaProjection;
-import android.util.Log;
 
 public class MediaProjectionCallback extends MediaProjection.Callback {
     private Activity activity;
@@ -19,6 +18,6 @@ public class MediaProjectionCallback extends MediaProjection.Callback {
 
     @Override
     public void onStop() {
-        Log.e("MProjection", "MediaProjectionCallback Stop");
+        Log.e("MediaProjectionCallback Stop");
     }
 }

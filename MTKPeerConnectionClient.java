@@ -3,7 +3,6 @@ package io.methinks.android.mtkrtc;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,12 +32,12 @@ class MTKPeerConnectionClient implements PeerConnection.Observer {
         this.dataChannel.registerObserver(new DataChannel.Observer() {
             @Override
             public void onBufferedAmountChange(long l) {
-                Log.e("&&&&", "DataChannel onBufferedAmountChange : " + l);
+                Log.e("DataChannel onBufferedAmountChange : " + l);
             }
 
             @Override
             public void onStateChange() {
-                Log.e("&&&&", "DataChannel onStateChange : " + dataChannel.state());
+                Log.e("DataChannel onStateChange : " + dataChannel.state());
             }
 
             @Override
@@ -59,97 +58,85 @@ class MTKPeerConnectionClient implements PeerConnection.Observer {
                         }
                     }
                 });
-//                ((Activity)context).runOnUiThread(() -> {
-//                    try {
-//                        ByteBuffer data = buffer.data;
-//                        byte[] bytes = new byte[data.remaining()];
-//                        data.get(bytes);
-//                        final String jsonStr = new String(bytes);
-//                        JSONObject response = new JSONObject(jsonStr);
-//                        JSONObject msg = new JSONObject(response.getString("msg"));
-//                        String type = response.getString("type");
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
-//                });
             }
         });
     }
 
-    MTKPeerConnectionClient(Context context, PeerConnectionFactory factory, PeerConnection.RTCConfiguration config, MTKVideoChatSession session, boolean enableDataChannel) {
+    boolean isPublisher;
+    MTKPeerConnectionClient(Context context, PeerConnectionFactory factory, PeerConnection.RTCConfiguration config, MTKVideoChatSession session, boolean enableDataChannelr) {
         this.context = context;
         this.enableDataChannel = enableDataChannel;
         peerConnection = factory.createPeerConnection(config, this);
         initDataChannel(session);
     }
 
+    MTKPeerConnectionClient(Context context, PeerConnectionFactory factory, PeerConnection.RTCConfiguration config, MTKVideoChatSession session, boolean enableDataChannel, boolean isPublisher) {
+        this.context = context;
+        this.enableDataChannel = enableDataChannel;
+        peerConnection = factory.createPeerConnection(config, this);
+        this.isPublisher = isPublisher;
+        initDataChannel(session);
+    }
+
     @Override
     public void onSignalingChange(PeerConnection.SignalingState signalingState) {
-        Log.e("&&&&", "onSignalingChange SignalingState : " + signalingState);
+        Log.e("onSignalingChange SignalingState : " + signalingState);
     }
 
     @Override
     public void onIceConnectionChange(PeerConnection.IceConnectionState iceConnectionState) {
-        Log.e("&&&&", "onIceConnectionChange PeerConnectionState : " + iceConnectionState);
+        Log.e("onIceConnectionChange PeerConnectionState : " + iceConnectionState);
     }
-
-
-
-
-//    @Override
-//    public void onConnectionChange(PeerConnection.PeerConnectionState newState) {
-//        Log.e("&&&&", "onConnectionChange PeerConnectionState : " + newState);
-//    }
 
     @Override
     public void onIceConnectionReceivingChange(boolean b) {
-        Log.e("&&&&", "onIceConnectionReceivingChange : " + b);
+        Log.e("onIceConnectionReceivingChange : " + b);
     }
 
     @Override
     public void onIceGatheringChange(PeerConnection.IceGatheringState iceGatheringState) {
-        Log.e("&&&&", "onIceGatheringChange IceGatheringState : " + iceGatheringState);
+        Log.e("onIceGatheringChange IceGatheringState : " + iceGatheringState);
     }
 
     @Override
     public void onIceCandidate(IceCandidate iceCandidate) {
-        Log.e("&&&&", "onIceCandidate");
+        Log.e("onIceCandidate");
 //        Util.printAllObject(TAG, iceCandidate);
     }
 
     @Override
     public void onIceCandidatesRemoved(IceCandidate[] iceCandidates) {
-        Log.e("&&&&", "onIceCandidatesRemoved");
+        Log.e("onIceCandidatesRemoved");
 
     }
 
     @Override
     public void onAddStream(MediaStream mediaStream) {
-        Log.e("&&&&", "onAddStream");
+        Log.e("onAddStream");
 //        Util.printAllObject(TAG, mediaStream);
     }
 
     @Override
     public void onRemoveStream(MediaStream mediaStream) {
-        Log.e("&&&&", "onRemoveStream");
+        Log.e("onRemoveStream");
 //        Util.printAllObject(TAG, mediaStream);
     }
 
 
     @Override
     public void onDataChannel(DataChannel dataChannel) {
-        Log.e("&&&&", "DataChannel onDataChannel state : " + dataChannel.state());
+        Log.e("DataChannel onDataChannel state : " + dataChannel.state());
 //        Util.printAllObject(TAG, dataChannel);
 //        this.dataChannel = dataChannel;
         dataChannel.registerObserver(new DataChannel.Observer() {
             @Override
             public void onBufferedAmountChange(long l) {
-                Log.e("&&&&", "DataChannel onBufferedAmountChange : " + l);
+                Log.e("DataChannel onBufferedAmountChange : " + l);
             }
 
             @Override
             public void onStateChange() {
-                Log.e("&&&&", "DataChannel onStateChange : " + dataChannel.state());
+                Log.e("DataChannel onStateChange : " + dataChannel.state());
             }
 
             @Override
@@ -164,26 +151,13 @@ class MTKPeerConnectionClient implements PeerConnection.Observer {
                                 body.get(bytes);
                                 final String jsonStr = new String(bytes);
                                 JSONObject response = new JSONObject(jsonStr);
-                                Log.e("&&&&", "onMessage DataChannel : " + response.toString());
+                                Log.e("onMessage DataChannel : " + response.toString());
                                 MTKDataStore.getInstance().client.listener.onReceivedBroadcastSignal(MTKDataStore.getInstance().client, response);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
                     });
-//                    ((Activity)context).runOnUiThread(() -> {
-//                        try {
-//                            ByteBuffer body = buffer.data;
-//                            byte[] bytes = new byte[body.remaining()];
-//                            body.get(bytes);
-//                            final String jsonStr = new String(bytes);
-//                            JSONObject response = new JSONObject(jsonStr);
-//                            Log.e("&&&&", "onMessage DataChannel : " + response.toString());
-//                            MTKDataStore.getInstance().client.listener.onReceivedBroadcastSignal(MTKDataStore.getInstance().client, response);
-//                        } catch (JSONException e) {
-//                            e.printStackTrace();
-//                        }
-//                    });
                 }
             }
         });
@@ -191,20 +165,9 @@ class MTKPeerConnectionClient implements PeerConnection.Observer {
 
     @Override
     public void onRenegotiationNeeded() {
-        Log.e("&&&&", "onRenegotiationNeeded");
+        Log.e("onRenegotiationNeeded");
     }
 
     @Override
-    public void onAddTrack(RtpReceiver rtpReceiver, MediaStream[] mediaStreams) {
-        Log.e("&&&&", "onAddTrack");
-//        Util.printAllObject(TAG, rtpReceiver);
-    }
-
-//    @Override
-//    public void onTrack(RtpTransceiver transceiver) {
-//        Log.e("&&&&", "onTrack");
-////        Util.printAllObject(TAG, transceiver);
-//    }
-
-
+    public void onAddTrack(RtpReceiver rtpReceiver, MediaStream[] mediaStreams) {Log.e("onAddTrack");}
 }

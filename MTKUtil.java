@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Point;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -20,12 +19,12 @@ public class MTKUtil {
     protected static void printMap(String tag, String marker, Map<Long, JSONObject> map){
         for (Long key: map.keySet()){
             JSONObject value = map.get(key);
-            Log.e(tag, marker + "::" + key + "//" + value.toString());
+            Log.e(marker + "::" + key + "//" + value.toString());
         }
     }
 
     protected static void printJSON(String tag, String marker, JSONObject json){
-        Log.e(tag, marker + "::" + json.toString());
+        Log.e(marker + "::" + json.toString());
     }
 
     protected static float convertDpToPixel(Context context, float dp){
@@ -60,7 +59,7 @@ public class MTKUtil {
                 e.printStackTrace();
             }
         }
-        Log.e(tag, "key and value of this object\n" + sb.toString());
+        Log.e("key and value of this object\n" + sb.toString());
 
     }
 
@@ -223,8 +222,8 @@ public class MTKUtil {
         display.getSize(size);
         int width = size.x;
         int height = size.y;
-        Log.e("Width", "" + width);
-        Log.e("height", "" + height);
+        Log.e("" + width);
+        Log.e("" + height);
 
         return new int[]{width, height};
     }

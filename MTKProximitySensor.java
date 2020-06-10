@@ -7,7 +7,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
-import android.util.Log;
 
 import org.webrtc.ThreadUtils;
 
@@ -39,7 +38,7 @@ public class MTKProximitySensor implements SensorEventListener {
     }
 
     private MTKProximitySensor(Context context, Runnable sensorStateListener) {
-        Log.d(TAG, "MTKProximitySensor" + "@[name=" + Thread.currentThread().getName() + ", id=" + Thread.currentThread().getId() + "]");
+        Log.d("MTKProximitySensor" + "@[name=" + Thread.currentThread().getName() + ", id=" + Thread.currentThread().getId() + "]");
         onSensorStateListener = sensorStateListener;
         sensorManager = ((SensorManager) context.getSystemService(Context.SENSOR_SERVICE));
     }
@@ -50,7 +49,7 @@ public class MTKProximitySensor implements SensorEventListener {
      */
     public boolean start() {
         threadChecker.checkIsOnValidThread();
-        Log.d(TAG, "start" + "@[name=" + Thread.currentThread().getName() + ", id=" + Thread.currentThread().getId() + "]");
+        Log.d("start" + "@[name=" + Thread.currentThread().getName() + ", id=" + Thread.currentThread().getId() + "]");
         if (!initDefaultSensor()) {
             // Proximity sensor is not supported on this device.
             return false;
@@ -62,7 +61,7 @@ public class MTKProximitySensor implements SensorEventListener {
     /** Deactivate the proximity sensor. */
     public void stop() {
         threadChecker.checkIsOnValidThread();
-        Log.d(TAG, "stop" + "@[name=" + Thread.currentThread().getName() + ", id=" + Thread.currentThread().getId() + "]");
+        Log.d("stop" + "@[name=" + Thread.currentThread().getName() + ", id=" + Thread.currentThread().getId() + "]");
         if (proximitySensor == null) {
             return;
         }
@@ -82,7 +81,7 @@ public class MTKProximitySensor implements SensorEventListener {
             throw new AssertionError("Expected condition to be true");
         }
         if (accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE) {
-            Log.e(TAG, "The values returned by this sensor cannot be trusted");
+            Log.e("The values returned by this sensor cannot be trusted");
         }
     }
 
@@ -96,10 +95,10 @@ public class MTKProximitySensor implements SensorEventListener {
         // avoid blocking.
         float distanceInCentimeters = event.values[0];
         if (distanceInCentimeters < proximitySensor.getMaximumRange()) {
-            Log.d(TAG, "Proximity sensor => NEAR state");
+            Log.d("Proximity sensor => NEAR state");
             lastStateReportIsNear = true;
         } else {
-            Log.d(TAG, "Proximity sensor => FAR state");
+            Log.d("Proximity sensor => FAR state");
             lastStateReportIsNear = false;
         }
 
@@ -109,7 +108,7 @@ public class MTKProximitySensor implements SensorEventListener {
             onSensorStateListener.run();
         }
 
-        Log.d(TAG, "onSensorChanged" + "@[name=" + Thread.currentThread().getName() + ", id=" + Thread.currentThread().getId() + "]" + ": "
+        Log.d("onSensorChanged" + "@[name=" + Thread.currentThread().getName() + ", id=" + Thread.currentThread().getId() + "]" + ": "
                 + "accuracy=" + event.accuracy + ", timestamp=" + event.timestamp + ", distance="
                 + event.values[0]);
     }
@@ -153,6 +152,6 @@ public class MTKProximitySensor implements SensorEventListener {
             info.append(", reporting mode: ").append(proximitySensor.getReportingMode());
             info.append(", isWakeUpSensor: ").append(proximitySensor.isWakeUpSensor());
         }
-        Log.d(TAG, info.toString());
+        Log.d(info.toString());
     }
 }

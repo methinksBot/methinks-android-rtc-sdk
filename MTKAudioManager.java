@@ -8,7 +8,6 @@ import android.content.pm.PackageManager;
 import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
 import android.os.Build;
-import android.util.Log;
 
 import org.webrtc.ThreadUtils;
 
@@ -128,7 +127,7 @@ public class MTKAudioManager {
             int state = intent.getIntExtra("state", STATE_UNPLUGGED);
             int microphone = intent.getIntExtra("microphone", HAS_NO_MIC);
             String name = intent.getStringExtra("name");
-            Log.d(TAG, "WiredHeadsetReceiver.onReceive" + "@[name=" + Thread.currentThread().getName() + ", id=" + Thread.currentThread().getId() + "]" + ": "
+            Log.d("WiredHeadsetReceiver.onReceive" + "@[name=" + Thread.currentThread().getName() + ", id=" + Thread.currentThread().getId() + "]" + ": "
                     + "a=" + intent.getAction() + ", s="
                     + (state == STATE_UNPLUGGED ? "unplugged" : "plugged") + ", m="
                     + (microphone == HAS_MIC ? "mic" : "no mic") + ", n=" + name + ", sb="
@@ -144,7 +143,7 @@ public class MTKAudioManager {
     }
 
     private MTKAudioManager(Context context) {
-        Log.d(TAG, "ctor");
+        Log.d("ctor");
         ThreadUtils.checkIsOnMainThread();
         apprtcContext = context;
         audioManager = ((AudioManager) context.getSystemService(Context.AUDIO_SERVICE));
@@ -155,7 +154,7 @@ public class MTKAudioManager {
 //        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 //        useSpeakerphone = sharedPreferences.getString(context.getString(R.string.pref_speakerphone_key), context.getString(R.string.pref_speakerphone_default));
         useSpeakerphone = SPEAKERPHONE_AUTO;
-        Log.d(TAG, "useSpeakerphone: " + useSpeakerphone);
+        Log.d("useSpeakerphone: " + useSpeakerphone);
         if (useSpeakerphone.equals(SPEAKERPHONE_FALSE)) {
             defaultAudioDevice = AudioDevice.EARPIECE;
         } else {
@@ -174,8 +173,8 @@ public class MTKAudioManager {
             }
         });
 
-        Log.d(TAG, "defaultAudioDevice: " + defaultAudioDevice);
-        Log.e(TAG, "Android SDK: " + Build.VERSION.SDK_INT + ", "
+        Log.d("defaultAudioDevice: " + defaultAudioDevice);
+        Log.e("Android SDK: " + Build.VERSION.SDK_INT + ", "
                 + "Release: " + Build.VERSION.RELEASE + ", "
                 + "Brand: " + Build.BRAND + ", "
                 + "Device: " + Build.DEVICE + ", "
@@ -187,15 +186,15 @@ public class MTKAudioManager {
     }
 
     public void start(AudioManagerEvents audioManagerEvents) {
-        Log.d(TAG, "start");
+        Log.d("start");
         ThreadUtils.checkIsOnMainThread();
         if (amState == AudioManagerState.RUNNING) {
-            Log.e(TAG, "AudioManager is already active");
+            Log.e("AudioManager is already active");
             return;
         }
         // TODO(henrika): perhaps call new method called preInitAudio() here if UNINITIALIZED.
 
-        Log.d(TAG, "AudioManager starts...");
+        Log.d("AudioManager starts...");
         this.audioManagerEvents = audioManagerEvents;
         amState = AudioManagerState.RUNNING;
 
@@ -242,7 +241,7 @@ public class MTKAudioManager {
                         typeOfChange = "AUDIOFOCUS_INVALID";
                         break;
                 }
-                Log.d(TAG, "onAudioFocusChange: " + typeOfChange);
+                Log.d("onAudioFocusChange: " + typeOfChange);
             }
         };
 
@@ -250,9 +249,9 @@ public class MTKAudioManager {
         int result = audioManager.requestAudioFocus(audioFocusChangeListener,
                 AudioManager.STREAM_VOICE_CALL, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            Log.d(TAG, "Audio focus request granted for VOICE_CALL streams");
+            Log.d("Audio focus request granted for VOICE_CALL streams");
         } else {
-            Log.e(TAG, "Audio focus request failed");
+            Log.e("Audio focus request failed");
         }
 
         // Start by setting MODE_IN_COMMUNICATION as default audio mode. It is
@@ -280,14 +279,14 @@ public class MTKAudioManager {
         // Register receiver for broadcast intents related to adding/removing a
         // wired headset.
         registerReceiver(wiredHeadsetReceiver, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
-        Log.d(TAG, "AudioManager started");
+        Log.d("AudioManager started");
     }
 
     public void stop() {
-        Log.d(TAG, "stop");
+        Log.d("stop");
         ThreadUtils.checkIsOnMainThread();
         if (amState != AudioManagerState.RUNNING) {
-            Log.e(TAG, "Trying to stop AudioManager in incorrect state: " + amState);
+            Log.e("Trying to stop AudioManager in incorrect state: " + amState);
             return;
         }
         amState = AudioManagerState.UNINITIALIZED;
@@ -304,7 +303,7 @@ public class MTKAudioManager {
         // Abandon audio focus. Gives the previous focus owner, if any, focus.
         audioManager.abandonAudioFocus(audioFocusChangeListener);
         audioFocusChangeListener = null;
-        Log.d(TAG, "Abandoned audio focus for VOICE_CALL streams");
+        Log.d("Abandoned audio focus for VOICE_CALL streams");
 
         if (proximitySensor != null) {
             proximitySensor.stop();
@@ -312,12 +311,12 @@ public class MTKAudioManager {
         }
 
         audioManagerEvents = null;
-        Log.d(TAG, "AudioManager stopped");
+        Log.d("AudioManager stopped");
     }
 
     /** Changes selection of the currently active audio device. */
     private void setAudioDeviceInternal(AudioDevice device) {
-        Log.d(TAG, "setAudioDeviceInternal(device=" + device + ")");
+        Log.d("setAudioDeviceInternal(device=" + device + ")");
         if (!audioDevices.contains(device)) {
             throw new AssertionError("Expected condition to be true");
         }
@@ -336,7 +335,7 @@ public class MTKAudioManager {
                 setSpeakerphoneOn(false);
                 break;
             default:
-                Log.e(TAG, "Invalid audio device selection");
+                Log.e("Invalid audio device selection");
                 break;
         }
         selectedAudioDevice = device;
@@ -360,10 +359,10 @@ public class MTKAudioManager {
                 }
                 break;
             default:
-                Log.e(TAG, "Invalid default audio device selection");
+                Log.e("Invalid default audio device selection");
                 break;
         }
-        Log.d(TAG, "setDefaultAudioDevice(device=" + defaultAudioDevice + ")");
+        Log.d("setDefaultAudioDevice(device=" + defaultAudioDevice + ")");
         updateAudioDeviceState();
     }
 
@@ -371,7 +370,7 @@ public class MTKAudioManager {
     public void selectAudioDevice(AudioDevice device) {
         ThreadUtils.checkIsOnMainThread();
         if (!audioDevices.contains(device)) {
-            Log.e(TAG, "Can not select " + device + " from available " + audioDevices);
+            Log.e("Can not select " + device + " from available " + audioDevices);
         }
         userSelectedAudioDevice = device;
         updateAudioDeviceState();
@@ -438,10 +437,10 @@ public class MTKAudioManager {
             for (AudioDeviceInfo device : devices) {
                 final int type = device.getType();
                 if (type == AudioDeviceInfo.TYPE_WIRED_HEADSET) {
-                    Log.d(TAG, "hasWiredHeadset: found wired headset");
+                    Log.d("hasWiredHeadset: found wired headset");
                     return true;
                 } else if (type == AudioDeviceInfo.TYPE_USB_DEVICE) {
-                    Log.d(TAG, "hasWiredHeadset: found USB audio device");
+                    Log.d("hasWiredHeadset: found USB audio device");
                     return true;
                 }
             }
@@ -455,10 +454,10 @@ public class MTKAudioManager {
      */
     public void updateAudioDeviceState() {
         ThreadUtils.checkIsOnMainThread();
-        Log.d(TAG, "--- updateAudioDeviceState: "
+        Log.d("--- updateAudioDeviceState: "
                 + "wired headset=" + hasWiredHeadset + ", "
                 + "BT state=" + bluetoothManager.getState());
-        Log.d(TAG, "Device status: "
+        Log.d("Device status: "
                 + "available=" + audioDevices + ", "
                 + "selected=" + selectedAudioDevice + ", "
                 + "user selected=" + userSelectedAudioDevice);
@@ -531,7 +530,7 @@ public class MTKAudioManager {
         if (bluetoothManager.getState() == MTKBluetoothManager.State.HEADSET_AVAILABLE
                 || bluetoothManager.getState() == MTKBluetoothManager.State.SCO_CONNECTING
                 || bluetoothManager.getState() == MTKBluetoothManager.State.SCO_CONNECTED) {
-            Log.d(TAG, "Need BT audio: start=" + needBluetoothAudioStart + ", "
+            Log.d("Need BT audio: start=" + needBluetoothAudioStart + ", "
                     + "stop=" + needBluetoothAudioStop + ", "
                     + "BT state=" + bluetoothManager.getState());
         }
@@ -574,7 +573,7 @@ public class MTKAudioManager {
         if (newAudioDevice != selectedAudioDevice || audioDeviceSetUpdated) {
             // Do the required device switch.
             setAudioDeviceInternal(newAudioDevice);
-            Log.d(TAG, "New device status: "
+            Log.d("New device status: "
                     + "available=" + audioDevices + ", "
                     + "selected=" + newAudioDevice);
             if (audioManagerEvents != null) {
@@ -582,6 +581,6 @@ public class MTKAudioManager {
                 audioManagerEvents.onAudioDeviceChanged(selectedAudioDevice, audioDevices);
             }
         }
-        Log.d(TAG, "--- updateAudioDeviceState done");
+        Log.d("--- updateAudioDeviceState done");
     }
 }

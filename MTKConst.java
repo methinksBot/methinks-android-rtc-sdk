@@ -25,4 +25,7 @@ public class MTKConst {
     public static final String ROOM_TYPE_INTERVIEW = "interview";
     public static final String ROOM_TYPE_APP_TEST = "apptest";
     public static final String ROOM_TYPE_USER_TEST = "usertest";
+
+    public static final String BASE_FEATURE_BUSINESS = "business_app";
+    public static final String BASE_FEATURE_APPTEST = "apptest_sdk";
 }

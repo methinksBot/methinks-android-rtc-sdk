@@ -1,7 +1,7 @@
 package io.methinks.android.mtkrtc;
 
+import android.text.TextUtils;
 import android.util.Base64;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -312,7 +312,13 @@ public class MTKTransactionUtil {
             sb.append(MTKDataStore.getInstance().roomType + "@");
             sb.append(publisher.videoType + "_");
             sb.append(MTKDataStore.getInstance().role + "_");
-            sb.append(MTKDataStore.getInstance().userId + "_0_");
+
+            if(MTKDataStore.getInstance().roomType.equals(MTKConst.ROOM_TYPE_APP_TEST) && !TextUtils.isEmpty(MTKDataStore.getInstance().sId)){
+                sb.append(MTKDataStore.getInstance().sId + "_0_");
+            }else{
+                sb.append(MTKDataStore.getInstance().userId + "_0_");
+            }
+
             sb.append(new Date().getTime());
             Log.e("MTKRTC", "Recording filename : " + sb.toString());
 
@@ -365,7 +371,7 @@ public class MTKTransactionUtil {
     }
 
     protected static String requestConfigure(WebSocket socket, MTKPublisher publisher, MTKVideoChatSession session, long handleId, SessionDescription sessionDescription, boolean audioSend, boolean videoSend){
-        Log.e("@#@#@#", "requestConfigure");
+        Log.e("requestConfigure");
         try {
             StringBuilder sb = new StringBuilder();
             sb.append("/");
@@ -379,7 +385,12 @@ public class MTKTransactionUtil {
             sb.append(MTKDataStore.getInstance().roomType + "@");
             sb.append(publisher.videoType + "_");
             sb.append(MTKDataStore.getInstance().role + "_");
-            sb.append(MTKDataStore.getInstance().userId + "_0_");
+            if(MTKDataStore.getInstance().roomType.equals(MTKConst.ROOM_TYPE_APP_TEST) && !TextUtils.isEmpty(MTKDataStore.getInstance().sId)){
+                sb.append(MTKDataStore.getInstance().sId + "_0_");
+            }else{
+                sb.append(MTKDataStore.getInstance().userId + "_0_");
+            }
+
             sb.append(new Date().getTime());
             Log.e("MTKRTC", "Recording filename : " + sb.toString());
 
@@ -390,10 +401,10 @@ public class MTKTransactionUtil {
 
             JSONObject body = new JSONObject();
             body.put("request", MTKTransactionType.MessageType.configure);
-//            body.put("audio", audioSend);
-//            body.put("video", videoSend);
-            body.put("audio", true);
-            body.put("video", true);
+            body.put("audio", audioSend);
+            body.put("video", videoSend);
+//            body.put("audio", true);
+//            body.put("video", true);
             body.put("data", true);
             body.put("record", true);
             body.put("filename", sb.toString());

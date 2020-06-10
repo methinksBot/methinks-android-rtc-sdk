@@ -22,6 +22,7 @@ public class MTKDataStore {
     protected PeerConnectionFactory pcFactory;
 
     protected String bucket;        // S3 bucket name
+    protected String sId;           // for appTest
     protected String secret;
     protected String projectId;     // Parse Campaign object id
     protected String userId;
@@ -36,6 +37,7 @@ public class MTKDataStore {
     protected String apiToken;      // for authentication.
     protected String roomType;
     protected String targetServer;  // dev, stag or prod
+    protected String baseFeature; // for modulization
     protected EglBase eglBase;
     protected MTKVideoChatSession mainSession;
     protected MTKVideoChatSession subSession; // for screen sharing
@@ -66,6 +68,7 @@ public class MTKDataStore {
 
     protected void clear(){
         LazyHolder.INSTANCE.context = null;
+        LazyHolder.INSTANCE.sId = null;
         LazyHolder.INSTANCE.mediaProjection = null;
         LazyHolder.INSTANCE.client = null;
         LazyHolder.INSTANCE.janus = null;

@@ -1,7 +1,6 @@
 package io.methinks.android.mtkrtc;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,7 +36,7 @@ public class MTKMediaServerConnector {
                 JSONObject args = new JSONObject();
                 args.put("fileName", params[1]);
 
-                Log.e(TAG, "3333333333333 : " + args.toString());
+                Log.e("3333333333333 : " + args.toString());
 
                 URL url = new URL(params[0]);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -66,9 +65,9 @@ public class MTKMediaServerConnector {
 
                 return json;
             } catch (MalformedURLException e) {
-                Log.e(TAG, "Malformed image URL : " + URL, e);
+                Log.e("Malformed image URL : " + URL, e);
             } catch (IOException e) {
-                Log.e(TAG, "Error fetching image from URL : " + URL, e);
+                Log.e("Error fetching image from URL : " + URL, e);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -127,9 +126,9 @@ public class MTKMediaServerConnector {
 
                 return json;
             } catch (MalformedURLException e) {
-                Log.e(TAG, "Malformed image URL : " + URL, e);
+                Log.e("Malformed image URL : " + URL, e);
             } catch (IOException e) {
-                Log.e(TAG, "Error fetching image from URL : " + URL, e);
+                Log.e("Error fetching image from URL : " + URL, e);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
