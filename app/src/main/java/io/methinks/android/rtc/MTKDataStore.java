@@ -37,6 +37,7 @@ public class MTKDataStore {
     protected String apiToken;      // for authentication.
     protected String roomType;
     protected String targetServer;  // dev, stag or prod
+    protected String baseFeature;
     protected EglBase eglBase;
     protected MTKVideoChatSession mainSession;
     protected MTKVideoChatSession subSession; // for screen sharing

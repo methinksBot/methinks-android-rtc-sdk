@@ -21,7 +21,6 @@ class MTKPeerConnectionClient implements PeerConnection.Observer {
     protected PeerConnection peerConnection;
     protected DataChannel dataChannel;
     protected MTKVideoChatSession session;
-//    protected MTKRecordedAudioToFileController saveRecordedAudioToFile;
     private boolean enableDataChannel;
 
     private void initDataChannel(MTKVideoChatSession session){
@@ -33,10 +32,12 @@ class MTKPeerConnectionClient implements PeerConnection.Observer {
         this.dataChannel.registerObserver(new DataChannel.Observer() {
             @Override
             public void onBufferedAmountChange(long l) {
+                Log.e("DataChannel onBufferedAmountChange : " + l);
             }
 
             @Override
             public void onStateChange() {
+                Log.e("DataChannel onStateChange : " + dataChannel.state());
             }
 
             @Override
@@ -62,17 +63,14 @@ class MTKPeerConnectionClient implements PeerConnection.Observer {
     MTKPeerConnectionClient(Context context, PeerConnectionFactory factory, PeerConnection.RTCConfiguration config, MTKVideoChatSession session, boolean enableDataChannel, boolean isPublisher) {
         this.context = context;
         this.enableDataChannel = enableDataChannel;
-        peerConnection = factory.createPeerConnection(config, this);
+        this.peerConnection = factory.createPeerConnection(config, this);
         this.isPublisher = isPublisher;
         initDataChannel(session);
     }
 
-    PeerConnection getPeerConnection() {
-        return peerConnection;
-    }
-
     @Override
     public void onSignalingChange(PeerConnection.SignalingState signalingState) {
+        Log.e("onSignalingChange SignalingState : " + signalingState);
     }
 
     @Override
@@ -80,49 +78,52 @@ class MTKPeerConnectionClient implements PeerConnection.Observer {
         /**
          * Show AlertDialog to notify if peer can't connect to Janus.
          */
-//        if(iceConnectionState == PeerConnection.IceConnectionState.FAILED){
-//            new Handler(Looper.getMainLooper()).post(() -> {
-//                MTKError error = new MTKError(MTKError.Domain.PublisherErrorDomain, SessionStateFailed.getErrorCode(), "Ice connection state is fail.");
-//                MTKDataStore.getInstance().client.listener.onError(MTKDataStore.getInstance().client, error);
-//            });
-//        }
+        Log.e("onIceConnectionChange PeerConnectionState : " + iceConnectionState);
     }
 
     @Override
     public void onIceConnectionReceivingChange(boolean b) {
+        Log.e("onIceConnectionReceivingChange : " + b);
     }
 
     @Override
     public void onIceGatheringChange(PeerConnection.IceGatheringState iceGatheringState) {
+        Log.e("onIceGatheringChange IceGatheringState : " + iceGatheringState);
     }
 
     @Override
     public void onIceCandidate(IceCandidate iceCandidate) {
+        Log.e("onIceCandidate");
     }
 
     @Override
     public void onIceCandidatesRemoved(IceCandidate[] iceCandidates) {
-
+        Log.e("onIceCandidatesRemoved");
     }
 
     @Override
     public void onAddStream(MediaStream mediaStream) {
+        Log.e("onAddStream");
     }
 
     @Override
     public void onRemoveStream(MediaStream mediaStream) {
+        Log.e("onRemoveStream");
     }
 
 
     @Override
     public void onDataChannel(DataChannel dataChannel) {
+        Log.e("DataChannel onDataChannel state : " + dataChannel.state());
         dataChannel.registerObserver(new DataChannel.Observer() {
             @Override
             public void onBufferedAmountChange(long l) {
+                Log.e("DataChannel onBufferedAmountChange : " + l);
             }
 
             @Override
             public void onStateChange() {
+                Log.e("DataChannel onStateChange : " + dataChannel.state());
             }
 
             @Override
@@ -135,6 +136,7 @@ class MTKPeerConnectionClient implements PeerConnection.Observer {
                             body.get(bytes);
                             final String jsonStr = new String(bytes);
                             JSONObject response = new JSONObject(jsonStr);
+                            Log.e("onMessage DataChannel : " + response.toString());
                             if(MTKDataStore.getInstance().client != null){
                                 MTKDataStore.getInstance().client.listener.onReceivedBroadcastSignal(MTKDataStore.getInstance().client, response);
                             }
@@ -148,10 +150,8 @@ class MTKPeerConnectionClient implements PeerConnection.Observer {
     }
 
     @Override
-    public void onRenegotiationNeeded() {
-    }
+    public void onRenegotiationNeeded() { Log.e("onRenegotiationNeeded"); }
 
     @Override
-    public void onAddTrack(RtpReceiver rtpReceiver, MediaStream[] mediaStreams) {
-    }
+    public void onAddTrack(RtpReceiver rtpReceiver, MediaStream[] mediaStreams) { Log.e("onAddTrack"); }
 }

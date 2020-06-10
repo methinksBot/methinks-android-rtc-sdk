@@ -19,12 +19,12 @@ public class MTKUtil {
     protected static void printMap(String tag, String marker, Map<Long, JSONObject> map){
         for (Long key: map.keySet()){
             JSONObject value = map.get(key);
-//            Log.e(tag, marker + "::" + key + "//" + value.toString());
+            Log.e(marker + "::" + key + "//" + value.toString());
         }
     }
 
     protected static void printJSON(String tag, String marker, JSONObject json){
-//        Log.e(tag, marker + "::" + json.toString());
+        Log.e(marker + "::" + json.toString());
     }
 
     protected static float convertDpToPixel(Context context, float dp){

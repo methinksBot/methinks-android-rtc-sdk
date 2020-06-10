@@ -38,7 +38,6 @@ import org.webrtc.VideoCapturer;
 import org.webrtc.VideoSink;
 import org.webrtc.VideoSource;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static io.methinks.android.rtc.MTKConst.*;
@@ -216,11 +215,6 @@ public class MTKPublisher extends MTKPerson{
         MTKPublisher.this.videoSend = videoSend;
 
         MTKVideoChatClient.executor.execute(() -> {
-            /*ArrayList<PeerConnection.IceServer> servers = new ArrayList<>();
-            servers.add(PeerConnection.IceServer.builder("stun:stun.l.google.com:19302").createIceServer());
-
-
-            PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(servers);*/
             PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(MTKDataStore.getInstance().iceServers);
             rtcConfig.sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN;
             boolean enableDataChannel = videoType == StreamVideoType.camera;

@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,23 +17,27 @@ import org.webrtc.IceCandidate;
 import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
+import org.webrtc.audio.AudioDeviceModule;
+import org.webrtc.audio.JavaAudioDeviceModule;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import io.methinks.android.rtc.MTKAudioManager.AudioDevice;
+import io.methinks.android.rtc.MTKAudioManager.AudioManagerEvents;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -44,9 +47,7 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
-import static io.methinks.android.rtc.MTKConst.*;
-import static io.methinks.android.rtc.MTKError.Domain.*;
-import static io.methinks.android.rtc.MTKError.ErrorCode.*;
+import static io.methinks.android.rtc.MTKError.Domain.SessionErrorDomain;
 
 public class MTKVideoChatClient {
     private static final String TAG = MTKVideoChatClient.class.getSimpleName();
@@ -86,6 +87,7 @@ public class MTKVideoChatClient {
         dataStore.sId = builder.sId;
         dataStore.janus = this.janus;
         dataStore.client = this;
+        dataStore.baseFeature = builder.baseFeature;
 
         if(TextUtils.isEmpty(builder.socketURL)){
             if(builder.targetServer.equals(MTKConst.TARGET_SERVER_DEV)){
@@ -101,6 +103,8 @@ public class MTKVideoChatClient {
 
         this.listener = builder.listener;
         this.keepAlives = new HashMap<>();
+
+
 
         // requestIceServer
         new Thread() {
@@ -147,13 +151,20 @@ public class MTKVideoChatClient {
             DefaultVideoEncoderFactory defaultVideoEncoderFactory = new DefaultVideoEncoderFactory(MTKDataStore.getInstance().eglBase.getEglBaseContext(), true, true);
             DefaultVideoDecoderFactory defaultVideoDecoderFactory = new DefaultVideoDecoderFactory(MTKDataStore.getInstance().eglBase.getEglBaseContext());
 
-//            initRecordedAudioToFileController();
-            MTKDataStore.getInstance().pcFactory = PeerConnectionFactory.builder()
-                    .setVideoEncoderFactory(defaultVideoEncoderFactory)
-                    .setVideoDecoderFactory(defaultVideoDecoderFactory)
-                    .setOptions(options)
-//                    .setAudioDeviceModule(createJavaAudioDevice())
-                    .createPeerConnectionFactory();
+            if(MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_BUSINESS)){
+                MTKDataStore.getInstance().pcFactory = PeerConnectionFactory.builder()
+                        .setVideoEncoderFactory(defaultVideoEncoderFactory)
+                        .setVideoDecoderFactory(defaultVideoDecoderFactory)
+                        .setOptions(options)
+                        .setAudioDeviceModule(createJavaAudioDevice())
+                        .createPeerConnectionFactory();
+            } else {
+                MTKDataStore.getInstance().pcFactory = PeerConnectionFactory.builder()
+                        .setVideoEncoderFactory(defaultVideoEncoderFactory)
+                        .setVideoDecoderFactory(defaultVideoDecoderFactory)
+                        .setOptions(options)
+                        .createPeerConnectionFactory();
+            }
         });
 
         OkHttpClient client = new OkHttpClient.Builder().readTimeout(3, TimeUnit.SECONDS).build();
@@ -161,11 +172,22 @@ public class MTKVideoChatClient {
                 .header(MTKConst.WEBSOCKET_HEADER_NAME, MTKConst.WEBSOCKET_HEADER_VALUE)
                 .url(MTKDataStore.getInstance().url)
                 .build();
+        Log.e("url : " + MTKDataStore.getInstance().url);
         janus = client.newWebSocket(request, janusListener);
         if(!MTKDataStore.getInstance().roomType.equals(MTKConst.ROOM_TYPE_APP_TEST)){
             audioManager = MTKAudioManager.create(MTKDataStore.getInstance().context);
-            audioManager.start((selectedAudioDevice, availableAudioDevices) -> {
-            });
+            if(MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_BUSINESS)) {
+                audioManager.start(new AudioManagerEvents() {
+                    @Override
+                    public void onAudioDeviceChanged(AudioDevice selectedAudioDevice, Set<AudioDevice> availableAudioDevices) {
+                        Log.e("onAudioManagerDevicesChanged: " + availableAudioDevices + ", " + "selected: " + selectedAudioDevice);
+                    }
+                });
+            } else {
+                audioManager.start((selectedAudioDevice, availableAudioDevices) -> {
+                });
+            }
+
         }
 
     }
@@ -228,7 +250,6 @@ public class MTKVideoChatClient {
                         if(publisher.audioTrack != null){
                             publisher.audioTrack.dispose();
                             publisher.audioTrack = null;
-//                            stopRecordedAudioToFileController();
                         }
 
                         if (publisher.pcClient.peerConnection != null) {
@@ -272,6 +293,20 @@ public class MTKVideoChatClient {
             subscriber.audioTrack.dispose();
             subscriber.audioTrack = null;
         }
+
+        if(MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_BUSINESS) && subscriber != null) {
+            if (subscriber.pcClient != null) {
+                if (subscriber.pcClient.peerConnection != null) {
+                    subscriber.pcClient.peerConnection.close();
+                    subscriber.pcClient.peerConnection = null;
+                }
+                if (subscriber.pcClient.dataChannel != null) {
+                    subscriber.pcClient.dataChannel.dispose();
+                }
+                subscriber.pcClient.dataChannel = null;
+                subscriber.pcClient = null;
+            }
+        }
     }
 
     protected WebSocketListener janusListener = new WebSocketListener() {
@@ -307,8 +342,7 @@ public class MTKVideoChatClient {
         public void onMessage(WebSocket webSocket, String text) {
             synchronized (this) {
                 try {
-//                    Log.e("websocket protocol receive : " + text);
-                    android.util.Log.e("mtkDebug", "websocket protocol receive : " + text);
+                    Log.e("websocket protocol receive : " + text);
                     JSONObject receivedJson = new JSONObject(text);
                     JSONObject data = receivedJson.has("data") ? receivedJson.getJSONObject("data") : null;
                     String receivedCommand = receivedJson.getString("janus");
@@ -317,6 +351,7 @@ public class MTKVideoChatClient {
                         String transactionId = receivedJson.getString("transaction");
                         JSONObject savedJson = MTKTransactionUtil.getTransactionData(transactionId);
                         if(savedJson != null) {
+                            MTKUtil.printJSON(TAG, "received transaction data", savedJson);
                             String savedCommand = savedJson.getString("janus");
                             if (receivedCommand.equals(MTKTransactionType.ack.name())) { // received ack
                                 MTKTransactionUtil.removeTransaction(transactionId);
@@ -324,7 +359,8 @@ public class MTKVideoChatClient {
 
                             if (savedCommand.equals(MTKTransactionType.create.name())) {    // created session
                                 new Handler(Looper.getMainLooper()).post(() -> listener.onChangedClientState(MTKVideoChatClient.this, MTKVideoChatClientState.connected));
-//                                ((Activity)MTKDataStore.getInstance().context).runOnUiThread(() -> listener.onChangedClientState(MTKVideoChatClient.this, MTKVideoChatClientState.connected));
+//                              ((Activity)MTKDataStore.getInstance().context).runOnUiThread(() -> listener.onChangedClientState(MTKVideoChatClient.this, MTKVideoChatClientState.connected));
+
                                 if(MTKDataStore.getInstance().mainSession != null && MTKDataStore.getInstance().mainSession.tempTansactionId.equals(transactionId)){  // created main session
                                     MTKDataStore.getInstance().mainSession.sessionId = data.getLong("id");   // set session id
                                     keepAlives.put(MTKDataStore.getInstance().mainSession.sessionId, true);
@@ -371,15 +407,32 @@ public class MTKVideoChatClient {
                         }else if(receivedCommand.equals("hangup")){
                             MTKSubscriber subscriber = MTKUtil.getSubscriberFromHandleId(senderHandleId);
                             if(subscriber != null){
-                                new Handler(Looper.getMainLooper()).post(() -> {
-                                    if(!subscriber.role.equals(MTKConst.USER_ROLE_OBSERVER)){
-                                        listener.onRemovedStreamOfSubscriber(MTKVideoChatClient.this, subscriber);
-                                    }
-                                    MTKDataStore.getInstance().subscribers.remove(subscriber);
-                                    if(MTKDataStore.getInstance().subscribers != null && MTKUtil.equalObserverCountAndSubscriberCount()){
-                                        MTKTransactionUtil.requestConfigureForRecordingStop(MTKDataStore.getInstance().client.janus, MTKDataStore.getInstance().mainPublisher.session, MTKDataStore.getInstance().mainPublisher.handleId);
-                                    }
-                                });
+                                if (MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_BUSINESS)) {
+                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if(!subscriber.role.equals(MTKConst.USER_ROLE_OBSERVER)){
+                                                listener.onRemovedStreamOfSubscriber(MTKVideoChatClient.this, subscriber);
+                                            }
+                                            MTKDataStore.getInstance().subscribers.remove(subscriber);
+                                            if(MTKDataStore.getInstance().subscribers != null && MTKUtil.equalObserverCountAndSubscriberCount()){
+                                                if(MTKDataStore.getInstance().client != null && MTKDataStore.getInstance().client.janus != null && MTKDataStore.getInstance().mainPublisher != null && MTKDataStore.getInstance().mainPublisher.session != null) {
+                                                    MTKTransactionUtil.requestConfigureForRecordingStop(MTKDataStore.getInstance().client.janus, MTKDataStore.getInstance().mainPublisher.session, MTKDataStore.getInstance().mainPublisher.handleId);
+                                                }
+                                            }
+                                        }
+                                    });
+                                } else if (MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_APPTEST)){
+                                    new Handler(Looper.getMainLooper()).post(() -> {
+                                        if(!subscriber.role.equals(MTKConst.USER_ROLE_OBSERVER)){
+                                            listener.onRemovedStreamOfSubscriber(MTKVideoChatClient.this, subscriber);
+                                        }
+                                        MTKDataStore.getInstance().subscribers.remove(subscriber);
+                                        if(MTKDataStore.getInstance().subscribers != null && MTKUtil.equalObserverCountAndSubscriberCount()){
+                                            MTKTransactionUtil.requestConfigureForRecordingStop(MTKDataStore.getInstance().client.janus, MTKDataStore.getInstance().mainPublisher.session, MTKDataStore.getInstance().mainPublisher.handleId);
+                                        }
+                                    });
+                                }
                             }
                         }
                         if(receivedJson.has("jsep")) {
@@ -401,6 +454,14 @@ public class MTKVideoChatClient {
                             }
 
                             if(dataOfPluginData.has("leaving")){
+                                if (MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_BUSINESS)) {
+                                    for(MTKSubscriber s : MTKDataStore.getInstance().subscribers){
+                                        if(s.feedId == dataOfPluginData.getLong("leaving")){
+                                            unsubscribe(s);
+                                        }
+                                    }
+                                }
+
                                 if(dataOfPluginData.has("reason")){
                                     if(dataOfPluginData.getString("reason").equals("kicked")){
                                         new Handler(Looper.getMainLooper()).post(() -> {
@@ -462,19 +523,21 @@ public class MTKVideoChatClient {
     private Timer mTimer;
     private void sendKeepAlive(MTKVideoChatSession session){
         Log.d("Start keepAlive call");
-//        new Thread(() -> {
-//            while(keepAlives.get(session.sessionId)){
-//                try {
-//                    Thread.sleep(50000);
-//                    MTKTransactionUtil.sendKeepAlive(janus, session);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }).start();
-
-        mTimer = new Timer();
-        mTimer.schedule(new CustomTimer(session), 0, 5000);
+        if (MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_BUSINESS)) {
+            new Thread(() -> {
+                while(keepAlives.get(session.sessionId)){
+                    try {
+                        Thread.sleep(50000);
+                        MTKTransactionUtil.sendKeepAlive(janus, session);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+        } else {
+            mTimer = new Timer();
+            mTimer.schedule(new CustomTimer(session), 0, 5000);
+        }
     }
 
     class CustomTimer extends TimerTask {
@@ -494,25 +557,7 @@ public class MTKVideoChatClient {
         ByteBuffer buffer = ByteBuffer.wrap(data.toString().getBytes());
         MTKDataStore.getInstance().mainPublisher.pcClient.dataChannel.send(new DataChannel.Buffer(buffer, false));
     }
-/*
-    public void startTranscription(String sttLang){
-        if(saveRecordedAudioToFile != null){
-            this.lastSttLang = sttLang;
-            if(saveRecordedAudioToFile.start()){
-                Log.e(TAG, "start transcription!");
-            }
-        }else{
-            Log.e(TAG, "Could not execute transcription.");
-        }
-    }
 
-    public void stopTranscription(){
-        if(saveRecordedAudioToFile != null){
-            saveRecordedAudioToFile.stop();
-            Log.e(TAG, "stop transcription!");
-        }
-    }
-*/
     public interface MTKRTCClientListener{
         void onChangedClientState(MTKVideoChatClient client, MTKVideoChatClientState statestart);
         void onStartedPublishing(MTKVideoChatClient client, MTKPublisher publisher);
@@ -521,7 +566,6 @@ public class MTKVideoChatClient {
         void onReceivedBroadcastSignal(MTKVideoChatClient client, JSONObject data);  // from data channel
         void onCreatedLocalExternalSampleCapturer(MTKVideoChatClient client, JSONObject data); // TODO: 13/05/2019 needs changing param
         void getStats(MTKVideoChatClient client, ArrayList<String> stats);
-        void onResultTranscription(String text);
         void onError(MTKVideoChatClient client, MTKError e);
     }
 
@@ -551,7 +595,9 @@ public class MTKVideoChatClient {
         private EglBase eglBase;
         private String roomType;
         private String sId; // for appTest
+        private String baseFeature;
         private MTKRTCClientListener listener;
+        private boolean useExtensionForWebSharing;
 
         public Builder() {
         }
@@ -655,6 +701,16 @@ public class MTKVideoChatClient {
             return this;
         }
 
+        public Builder baseFeature(String val) {
+            baseFeature = val;
+            return this;
+        }
+
+        public Builder useExtensionForWebSharing(boolean val) {
+            useExtensionForWebSharing = val;
+            return this;
+        }
+
         @Override
         public String toString() {
             return "Builder{" +
@@ -677,6 +733,8 @@ public class MTKVideoChatClient {
                     ", eglBase=" + eglBase +
                     ", roomType='" + roomType + '\'' +
                     ", listener=" + listener +
+                    ", baseFeature='" + baseFeature + '\'' +
+                    ", useExtensionForWebSharing=" + useExtensionForWebSharing +
                     '}';
         }
 
@@ -687,18 +745,6 @@ public class MTKVideoChatClient {
 
 
     ////////////////////////////////////////// audio device
-/*
-    protected MTKRecordedAudioToFileController saveRecordedAudioToFile;
-    private void initRecordedAudioToFileController(){
-        saveRecordedAudioToFile = new MTKRecordedAudioToFileController(MTKVideoChatClient.executor);
-    }
-
-    protected void stopRecordedAudioToFileController(){
-
-        saveRecordedAudioToFile.stop();
-        Log.e(TAG, "Recording input audio to file is inactivated");
-    }
-
     AudioDeviceModule createJavaAudioDevice() {
         // Enable/disable OpenSL ES playback.
 
@@ -706,42 +752,40 @@ public class MTKVideoChatClient {
         JavaAudioDeviceModule.AudioRecordErrorCallback audioRecordErrorCallback = new JavaAudioDeviceModule.AudioRecordErrorCallback() {
             @Override
             public void onWebRtcAudioRecordInitError(String errorMessage) {
-                Log.e(TAG, "onWebRtcAudioRecordInitError: " + errorMessage);
+                Log.e("onWebRtcAudioRecordInitError: " + errorMessage);
             }
 
             @Override
             public void onWebRtcAudioRecordStartError(
                     JavaAudioDeviceModule.AudioRecordStartErrorCode errorCode, String errorMessage) {
-                Log.e(TAG, "onWebRtcAudioRecordStartError: " + errorCode + ". " + errorMessage);
+                Log.e("onWebRtcAudioRecordStartError: " + errorCode + ". " + errorMessage);
             }
 
             @Override
             public void onWebRtcAudioRecordError(String errorMessage) {
-                Log.e(TAG, "onWebRtcAudioRecordError: " + errorMessage);
+                Log.e("onWebRtcAudioRecordError: " + errorMessage);
             }
         };
 
         JavaAudioDeviceModule.AudioTrackErrorCallback audioTrackErrorCallback = new JavaAudioDeviceModule.AudioTrackErrorCallback() {
             @Override
             public void onWebRtcAudioTrackInitError(String errorMessage) {
-                Log.e(TAG, "onWebRtcAudioTrackInitError: " + errorMessage);
+                Log.e("onWebRtcAudioTrackInitError: " + errorMessage);
             }
 
             @Override
             public void onWebRtcAudioTrackStartError(
                     JavaAudioDeviceModule.AudioTrackStartErrorCode errorCode, String errorMessage) {
-                Log.e(TAG, "onWebRtcAudioTrackStartError: " + errorCode + ". " + errorMessage);
+                Log.e("onWebRtcAudioTrackStartError: " + errorCode + ". " + errorMessage);
             }
 
             @Override
             public void onWebRtcAudioTrackError(String errorMessage) {
-                Log.e(TAG, "onWebRtcAudioTrackError: " + errorMessage);
+                Log.e("onWebRtcAudioTrackError: " + errorMessage);
             }
         };
 
-
         return JavaAudioDeviceModule.builder(MTKDataStore.getInstance().context)
-                .setSamplesReadyCallback(saveRecordedAudioToFile)
                 .setUseHardwareAcousticEchoCanceler(false)
                 .setUseHardwareNoiseSuppressor(false)
 //                .setUseHardwareAcousticEchoCanceler(!peerConnectionParameters.disableBuiltInAEC)
@@ -750,5 +794,4 @@ public class MTKVideoChatClient {
                 .setAudioTrackErrorCallback(audioTrackErrorCallback)
                 .createAudioDeviceModule();
     }
-*/
 }
