@@ -1,29 +1,34 @@
 package io.methinks.android.rtc;
 
 public class MTKError {
-    protected MTKError.Domain errorDomain;
-    protected MTKError.ErrorCode errorCode;
+    protected Domain errorDomain;
+    protected ErrorCode errorCode;
     protected String errorMessage;
     protected Exception exception;
 
-    protected MTKError(MTKError.Domain errorDomain, int errorCode, String msg) {
-        this.errorMessage = msg == null ? "(null description)" : msg;
-        this.errorDomain = errorDomain;
-        this.errorCode = MTKError.ErrorCode.fromTypeCode(errorCode);
+    public MTKError(ErrorCode errorCode) {
+        this.errorMessage = "(null description)";
+        this.errorCode = errorCode;
     }
 
-    protected MTKError(MTKError.Domain errorDomain, int errorCode, Exception exception) {
+    protected MTKError(Domain errorDomain, int errorCode, String msg) {
+        this.errorMessage = msg == null ? "(null description)" : msg;
+        this.errorDomain = errorDomain;
+        this.errorCode = ErrorCode.fromTypeCode(errorCode);
+    }
+
+    protected MTKError(Domain errorDomain, int errorCode, Exception exception) {
         this.errorMessage = "(null description)";
         this.errorDomain = errorDomain;
-        this.errorCode = MTKError.ErrorCode.fromTypeCode(errorCode);
+        this.errorCode = ErrorCode.fromTypeCode(errorCode);
         this.exception = exception;
     }
 
-    public MTKError.Domain getErrorDomain() {
+    public Domain getErrorDomain() {
         return this.errorDomain;
     }
 
-    public MTKError.ErrorCode getErrorCode() {
+    public ErrorCode getErrorCode() {
         return this.errorCode;
     }
 
@@ -84,7 +89,8 @@ public class MTKError {
         SessionBlockedCountry(1026),
         SessionConnectionLimitExceeded(1027),
         SessionUnexpectedGetSessionInfoResponse(2001),
-        SessionIllegalState(1015);
+        SessionIllegalState(1015),
+        ServiceIntentIsNull(1016);
 
         private int code;
 
@@ -96,12 +102,12 @@ public class MTKError {
             return this.code;
         }
 
-        public static MTKError.ErrorCode fromTypeCode(int id) {
-            MTKError.ErrorCode[] var1 = values();
+        public static ErrorCode fromTypeCode(int id) {
+            ErrorCode[] var1 = values();
             int var2 = var1.length;
 
             for(int var3 = 0; var3 < var2; ++var3) {
-                MTKError.ErrorCode code = var1[var3];
+                ErrorCode code = var1[var3];
                 if (code.getErrorCode() == id) {
                     return code;
                 }

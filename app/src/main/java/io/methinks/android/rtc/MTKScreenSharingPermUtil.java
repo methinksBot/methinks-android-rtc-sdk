@@ -9,7 +9,6 @@ import android.media.projection.MediaProjectionManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
-
 public class MTKScreenSharingPermUtil {
 
     public static boolean checkPermissionCapture(Activity activity, int requestCode, MediaProjectionManager mediaProjectionManager){

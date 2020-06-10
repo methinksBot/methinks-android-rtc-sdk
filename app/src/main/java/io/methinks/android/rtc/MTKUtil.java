@@ -19,12 +19,12 @@ public class MTKUtil {
     protected static void printMap(String tag, String marker, Map<Long, JSONObject> map){
         for (Long key: map.keySet()){
             JSONObject value = map.get(key);
-//            Log.e(tag, marker + "::" + key + "//" + value.toString());
+            Log.e(marker + "::" + key + "//" + value.toString());
         }
     }
 
     protected static void printJSON(String tag, String marker, JSONObject json){
-//        Log.e(tag, marker + "::" + json.toString());
+        Log.e(marker + "::" + json.toString());
     }
 
     protected static float convertDpToPixel(Context context, float dp){
@@ -39,7 +39,7 @@ public class MTKUtil {
         String id = "";
 
         for (int i = 0; i < len; i++) {
-            int position = (int) Math.floor(Math.random() * charSet.length());
+            int position = (int)Math.floor(Math.random() * charSet.length());
             id += charSet.substring(position, position + 1);
         }
 
@@ -59,6 +59,8 @@ public class MTKUtil {
                 e.printStackTrace();
             }
         }
+        Log.e("key and value of this object\n" + sb.toString());
+
     }
 
     protected static boolean isPublisherTransaction(String transactionId){
@@ -175,6 +177,7 @@ public class MTKUtil {
     }
 
     protected static String getRoleForSubscriber(JSONObject data){
+        Log.e("subscribers count", "subscribers count role check : " + data.toString());
         try {
             if(data == null){
                 return "";
@@ -219,6 +222,8 @@ public class MTKUtil {
         display.getSize(size);
         int width = size.x;
         int height = size.y;
+        Log.e("" + width);
+        Log.e("" + height);
 
         return new int[]{width, height};
     }

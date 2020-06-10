@@ -79,7 +79,12 @@ public class MTKBluetoothManager {
     // Runs when the Bluetooth timeout expires. We use that timeout after calling
     // startScoAudio() or stopScoAudio() because we're not guaranteed to get a
     // callback after those calls.
-    private final Runnable bluetoothTimeoutRunnable = () -> bluetoothTimeout();
+    private final Runnable bluetoothTimeoutRunnable = new Runnable() {
+        @Override
+        public void run() {
+            bluetoothTimeout();
+        }
+    };
 
     /**
      * Implementation of an interface that notifies BluetoothProfile IPC clients when they have been

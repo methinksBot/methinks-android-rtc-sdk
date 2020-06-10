@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 public class MTKMediaServerConnector {
@@ -23,7 +24,7 @@ public class MTKMediaServerConnector {
 
 
         this.callback = callback;
-        String[]args = new String[]{URL + "/api/v1/port", fileName};
+        String []args = new String[]{URL + "/api/v1/port", fileName};
         new MTKMediaServerTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, args);
     }
 
@@ -35,8 +36,9 @@ public class MTKMediaServerConnector {
                 JSONObject args = new JSONObject();
                 args.put("fileName", params[1]);
 
+                Log.e("3333333333333 : " + args.toString());
 
-                java.net.URL url = new URL(params[0]);
+                URL url = new URL(params[0]);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setReadTimeout(10000);
                 connection.setConnectTimeout(15000);
@@ -62,7 +64,11 @@ public class MTKMediaServerConnector {
                 JSONObject json = new JSONObject(buffer.toString());
 
                 return json;
-            } catch (JSONException | IOException e) {
+            } catch (MalformedURLException e) {
+                Log.e("Malformed image URL : " + URL, e);
+            } catch (IOException e) {
+                Log.e("Error fetching image from URL : " + URL, e);
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
             return null;
@@ -82,7 +88,7 @@ public class MTKMediaServerConnector {
     public void close(int pid, Callback callback){
 
         this.callback = callback;
-        String[]args = new String[]{URL + "/api/v1/close", String.valueOf(pid)};
+        String []args = new String[]{URL + "/api/v1/close", String.valueOf(pid)};
         new MTKMediaServerStopTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, args);
     }
 
@@ -93,7 +99,7 @@ public class MTKMediaServerConnector {
                 JSONObject args = new JSONObject();
                 args.put("pid", Integer.parseInt(params[1]));
 
-                java.net.URL url = new URL(params[0]);
+                URL url = new URL(params[0]);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setReadTimeout(10000);
                 connection.setConnectTimeout(15000);
@@ -119,7 +125,11 @@ public class MTKMediaServerConnector {
                 JSONObject json = new JSONObject(buffer.toString());
 
                 return json;
-            } catch (IOException | JSONException e) {
+            } catch (MalformedURLException e) {
+                Log.e("Malformed image URL : " + URL, e);
+            } catch (IOException e) {
+                Log.e("Error fetching image from URL : " + URL, e);
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
             return null;

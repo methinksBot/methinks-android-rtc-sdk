@@ -37,11 +37,13 @@ public class MTKDataStore {
     protected String apiToken;      // for authentication.
     protected String roomType;
     protected String targetServer;  // dev, stag or prod
+    protected String baseFeature; // for modulization
     protected EglBase eglBase;
     protected MTKVideoChatSession mainSession;
     protected MTKVideoChatSession subSession; // for screen sharing
     protected MTKPublisher mainPublisher;
     protected MTKPublisher screenSharingPublisher;
+    protected boolean useExtensionForWebSharing;
 //    protected LinkedHashMap<Long, MTKSubscriber> subscribers;   // key: feed id, value: MTKSubscriber object
     protected ArrayList<MTKSubscriber> subscribers;   // key: feed id, value: MTKSubscriber object
 

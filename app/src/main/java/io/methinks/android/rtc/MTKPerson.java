@@ -41,6 +41,8 @@ public class MTKPerson {
     protected Rotation currentRotation;
     protected float ratio = 0.0f;
 
+    protected int shareType;
+
     protected void handleIceCandidatePool() {
         MTKVideoChatClient.executor.execute(() -> {
             synchronized (this) {

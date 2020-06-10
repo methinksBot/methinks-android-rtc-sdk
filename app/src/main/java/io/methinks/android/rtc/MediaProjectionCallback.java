@@ -18,5 +18,6 @@ public class MediaProjectionCallback extends MediaProjection.Callback {
 
     @Override
     public void onStop() {
+        Log.e("MediaProjectionCallback Stop");
     }
 }
