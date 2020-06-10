@@ -101,16 +101,16 @@ public class MTKAudioManager {
 
         // The proximity sensor should only be activated when there are exactly two
         // available audio devices.
-        if (audioDevices.size() == 2 && audioDevices.contains(MTKAudioManager.AudioDevice.EARPIECE)
-                && audioDevices.contains(MTKAudioManager.AudioDevice.SPEAKER_PHONE)) {
+        if (audioDevices.size() == 2 && audioDevices.contains(AudioDevice.EARPIECE)
+                && audioDevices.contains(AudioDevice.SPEAKER_PHONE)) {
             if (proximitySensor.sensorReportsNearState()) {
                 // Sensor reports that a "handset is being held up to a person's ear",
                 // or "something is covering the light sensor".
-                setAudioDeviceInternal(MTKAudioManager.AudioDevice.EARPIECE);
+                setAudioDeviceInternal(AudioDevice.EARPIECE);
             } else {
                 // Sensor reports that a "handset is removed from a person's ear", or
                 // "the light sensor is no longer covered".
-                setAudioDeviceInternal(MTKAudioManager.AudioDevice.SPEAKER_PHONE);
+                setAudioDeviceInternal(AudioDevice.SPEAKER_PHONE);
             }
         }
     }
@@ -143,6 +143,7 @@ public class MTKAudioManager {
     }
 
     private MTKAudioManager(Context context) {
+        Log.d("ctor");
         ThreadUtils.checkIsOnMainThread();
         apprtcContext = context;
         audioManager = ((AudioManager) context.getSystemService(Context.AUDIO_SERVICE));
@@ -150,7 +151,10 @@ public class MTKAudioManager {
         wiredHeadsetReceiver = new WiredHeadsetReceiver();
         amState = AudioManagerState.UNINITIALIZED;
 
+//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+//        useSpeakerphone = sharedPreferences.getString(context.getString(R.string.pref_speakerphone_key), context.getString(R.string.pref_speakerphone_default));
         useSpeakerphone = SPEAKERPHONE_AUTO;
+        Log.d("useSpeakerphone: " + useSpeakerphone);
         if (useSpeakerphone.equals(SPEAKERPHONE_FALSE)) {
             defaultAudioDevice = AudioDevice.EARPIECE;
         } else {
@@ -160,13 +164,17 @@ public class MTKAudioManager {
         // Create and initialize the proximity sensor.
         // Tablet devices (e.g. Nexus 7) does not support proximity sensors.
         // Note that, the sensor will not be active until start() has been called.
-        // This method will be called each time a state change is detected.
-        // Example: user holds his hand over the device (closer than ~5 cm),
-        // or removes his hand from the device.
-        proximitySensor = MTKProximitySensor.create(context, () -> onProximitySensorChangedState());
+        proximitySensor = MTKProximitySensor.create(context, new Runnable() {
+            // This method will be called each time a state change is detected.
+            // Example: user holds his hand over the device (closer than ~5 cm),
+            // or removes his hand from the device.
+            public void run() {
+                onProximitySensorChangedState();
+            }
+        });
 
         Log.d("defaultAudioDevice: " + defaultAudioDevice);
-        Log.d("Android SDK: " + Build.VERSION.SDK_INT + ", "
+        Log.e("Android SDK: " + Build.VERSION.SDK_INT + ", "
                 + "Release: " + Build.VERSION.RELEASE + ", "
                 + "Brand: " + Build.BRAND + ", "
                 + "Device: " + Build.DEVICE + ", "
@@ -178,9 +186,10 @@ public class MTKAudioManager {
     }
 
     public void start(AudioManagerEvents audioManagerEvents) {
+        Log.d("start");
         ThreadUtils.checkIsOnMainThread();
         if (amState == AudioManagerState.RUNNING) {
-            Log.w("AudioManager is already active");
+            Log.e("AudioManager is already active");
             return;
         }
         // TODO(henrika): perhaps call new method called preInitAudio() here if UNINITIALIZED.
@@ -232,6 +241,7 @@ public class MTKAudioManager {
                         typeOfChange = "AUDIOFOCUS_INVALID";
                         break;
                 }
+                Log.d("onAudioFocusChange: " + typeOfChange);
             }
         };
 
@@ -241,7 +251,7 @@ public class MTKAudioManager {
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             Log.d("Audio focus request granted for VOICE_CALL streams");
         } else {
-            Log.w("Audio focus request failed");
+            Log.e("Audio focus request failed");
         }
 
         // Start by setting MODE_IN_COMMUNICATION as default audio mode. It is
@@ -273,9 +283,10 @@ public class MTKAudioManager {
     }
 
     public void stop() {
+        Log.d("stop");
         ThreadUtils.checkIsOnMainThread();
         if (amState != AudioManagerState.RUNNING) {
-            Log.w("Trying to stop AudioManager in incorrect state: " + amState);
+            Log.e("Trying to stop AudioManager in incorrect state: " + amState);
             return;
         }
         amState = AudioManagerState.UNINITIALIZED;
@@ -324,7 +335,7 @@ public class MTKAudioManager {
                 setSpeakerphoneOn(false);
                 break;
             default:
-                Log.w("Invalid audio device selection");
+                Log.e("Invalid audio device selection");
                 break;
         }
         selectedAudioDevice = device;
@@ -348,7 +359,7 @@ public class MTKAudioManager {
                 }
                 break;
             default:
-                Log.w("Invalid default audio device selection");
+                Log.e("Invalid default audio device selection");
                 break;
         }
         Log.d("setDefaultAudioDevice(device=" + defaultAudioDevice + ")");
@@ -359,7 +370,7 @@ public class MTKAudioManager {
     public void selectAudioDevice(AudioDevice device) {
         ThreadUtils.checkIsOnMainThread();
         if (!audioDevices.contains(device)) {
-            Log.w("Can't select " + device + " from available " + audioDevices);
+            Log.e("Can not select " + device + " from available " + audioDevices);
         }
         userSelectedAudioDevice = device;
         updateAudioDeviceState();

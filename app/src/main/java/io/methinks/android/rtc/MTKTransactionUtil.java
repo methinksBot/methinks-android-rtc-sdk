@@ -68,9 +68,9 @@ public class MTKTransactionUtil {
     protected static String sendKeepAlive(WebSocket socket, MTKVideoChatSession sessionId){
         try{
             JSONObject json = new JSONObject();
-            json.put("janus", MTKTransactionType.keepalive.name());
+            json.put("janus", MTKTransactionType.keepalive);
             json.put("session_id", sessionId.sessionId);
-            Log.d("keepAlive " + json.toString());
+
             return send(socket, json);
         }catch (JSONException e){
             e.printStackTrace();
@@ -269,6 +269,7 @@ public class MTKTransactionUtil {
 
 
     protected static String requestConfigureForOffer(WebSocket socket, MTKVideoChatSession session, long handleId, SessionDescription sessionDescription){
+        Log.e("@#@#@#", "requestConfigureForOffer");
         try {
             JSONObject json = new JSONObject();
             json.put("janus", MTKTransactionType.message.name());
@@ -276,7 +277,7 @@ public class MTKTransactionUtil {
             json.put("handle_id", handleId);
 
             JSONObject body = new JSONObject();
-            body.put("request", MTKTransactionType.MessageType.configure.name());
+            body.put("request", MTKTransactionType.MessageType.configure);
             body.put("audio", false);
             body.put("video", false);
             body.put("data", true);
@@ -297,9 +298,12 @@ public class MTKTransactionUtil {
     }
 
     protected static String requestConfigureForRecordingStart(WebSocket socket, MTKPublisher publisher, MTKVideoChatSession session, long handleId, boolean audioSend, boolean videoSend){
+        Log.e("@#@#@#", "requestConfigureForRecordingStart");
         try {
             StringBuilder sb = new StringBuilder();
-            sb.append("/home/ubuntu/");
+            sb.append("/");
+            sb.append("home" + "/");
+            sb.append("ubuntu" + "/");
             sb.append("record" + "/");
             sb.append(MTKDataStore.getInstance().bucket + "_");
             sb.append(MTKDataStore.getInstance().targetServer + "_");
@@ -314,7 +318,9 @@ public class MTKTransactionUtil {
             }else{
                 sb.append(MTKDataStore.getInstance().userId + "_0_");
             }
+
             sb.append(new Date().getTime());
+            Log.e("MTKRTC", "Recording filename : " + sb.toString());
 
             JSONObject json = new JSONObject();
             json.put("janus", MTKTransactionType.message.name());
@@ -322,7 +328,7 @@ public class MTKTransactionUtil {
             json.put("handle_id", handleId);
 
             JSONObject body = new JSONObject();
-            body.put("request", MTKTransactionType.MessageType.configure.name());
+            body.put("request", MTKTransactionType.MessageType.configure);
             body.put("audio", audioSend);
             body.put("video", videoSend);
             body.put("data", true);
@@ -341,6 +347,7 @@ public class MTKTransactionUtil {
     }
 
     protected static String requestConfigureForRecordingStop(WebSocket socket, MTKVideoChatSession session, long handleId){
+        Log.e("@#@#@#", "requestConfigureForRecordingStop");
         try {
             JSONObject json = new JSONObject();
             json.put("janus", MTKTransactionType.message.name());
@@ -348,7 +355,7 @@ public class MTKTransactionUtil {
             json.put("handle_id", handleId);
 
             JSONObject body = new JSONObject();
-            body.put("request", MTKTransactionType.MessageType.configure.name());
+            body.put("request", MTKTransactionType.MessageType.configure);
             body.put("audio", false);
             body.put("video", false);
             body.put("data", true);
@@ -364,9 +371,12 @@ public class MTKTransactionUtil {
     }
 
     protected static String requestConfigure(WebSocket socket, MTKPublisher publisher, MTKVideoChatSession session, long handleId, SessionDescription sessionDescription, boolean audioSend, boolean videoSend){
+        Log.e("requestConfigure");
         try {
             StringBuilder sb = new StringBuilder();
-            sb.append("/home/ubuntu/");
+            sb.append("/");
+            sb.append("home" + "/");
+            sb.append("ubuntu" + "/");
             sb.append("record" + "/");
             sb.append(MTKDataStore.getInstance().bucket + "_");
             sb.append(MTKDataStore.getInstance().targetServer + "_");
@@ -382,6 +392,7 @@ public class MTKTransactionUtil {
             }
 
             sb.append(new Date().getTime());
+            Log.e("MTKRTC", "Recording filename : " + sb.toString());
 
             JSONObject json = new JSONObject();
             json.put("janus", MTKTransactionType.message.name());
@@ -389,9 +400,11 @@ public class MTKTransactionUtil {
             json.put("handle_id", handleId);
 
             JSONObject body = new JSONObject();
-            body.put("request", MTKTransactionType.MessageType.configure.name());
+            body.put("request", MTKTransactionType.MessageType.configure);
             body.put("audio", audioSend);
             body.put("video", videoSend);
+//            body.put("audio", true);
+//            body.put("video", true);
             body.put("data", true);
             body.put("record", true);
             body.put("filename", sb.toString());
@@ -418,7 +431,7 @@ public class MTKTransactionUtil {
             json.put("handle_id", publisher.handleId);
 
             JSONObject body = new JSONObject();
-            body.put("request", MTKTransactionType.MessageType.rtp_forward.name());
+            body.put("request", MTKTransactionType.MessageType.rtp_forward);
             body.put("room", MTKDataStore.getInstance().roomId);
             body.put("secret", MTKDataStore.getInstance().secret);
             body.put("publisher_id", publisher.feedId);    // publisher feed id
@@ -453,7 +466,7 @@ public class MTKTransactionUtil {
             json.put("handle_id", publisher.handleId);
 
             JSONObject body = new JSONObject();
-            body.put("request", MTKTransactionType.MessageType.rtp_forward.name());
+            body.put("request", MTKTransactionType.MessageType.rtp_forward);
             body.put("room", MTKDataStore.getInstance().roomId);
             body.put("secret", MTKDataStore.getInstance().secret);
             body.put("publisher_id", publisher.feedId);    // publisher feed id
@@ -485,7 +498,7 @@ public class MTKTransactionUtil {
             json.put("handle_id", publisher.handleId);
 
             JSONObject body = new JSONObject();
-            body.put("request", MTKTransactionType.MessageType.stop_rtp_forward.name());
+            body.put("request", MTKTransactionType.MessageType.stop_rtp_forward);
             body.put("room", MTKDataStore.getInstance().roomId);
             body.put("secret", "kqtoixA5wL1559875454878");
             body.put("publisher_id", publisher.feedId);    // publisher feed id
@@ -511,11 +524,10 @@ public class MTKTransactionUtil {
             json.put("token", MTKDataStore.getInstance().apiToken);
 
             if(!(json.has("janus") && json.getString("janus").equals("keepalive"))){
-//                Log.d(TAG, "websocket send Message text : " + json);
+                Log.e(TAG, "websocket send Message text : " + json);
             }
 
-
-            android.util.Log.e("mtkDebug", "websocket protocol send : " + json.toString());
+            Log.e(TAG, "websocket protocol send : " + json.toString());
 
             socket.send(json.toString());
             transactionMap.put(transactionId, json);
@@ -561,7 +573,7 @@ public class MTKTransactionUtil {
         String transactionId = "";
 
         for (int i = 0; i < len; i++) {
-            int position = (int) Math.floor(Math.random() * charSet.length());
+            int position = (int)Math.floor(Math.random() * charSet.length());
             transactionId += charSet.substring(position, position + 1);
         }
 
