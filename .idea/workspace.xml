@@ -3,25 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="80b8a40f-b8fe-4a43-84f9-a077b0a4e7da" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Log.java" beforeDir="false" afterPath="$PROJECT_DIR$/Log.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MTKAudioManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/MTKAudioManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MTKBluetoothManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/MTKBluetoothManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MTKConst.java" beforeDir="false" afterPath="$PROJECT_DIR$/MTKConst.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MTKDataStore.java" beforeDir="false" afterPath="$PROJECT_DIR$/MTKDataStore.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MTKError.java" beforeDir="false" afterPath="$PROJECT_DIR$/MTKError.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MTKMediaServerConnector.java" beforeDir="false" afterPath="$PROJECT_DIR$/MTKMediaServerConnector.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MTKPeerConnectionClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/MTKPeerConnectionClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MTKPerson.java" beforeDir="false" afterPath="$PROJECT_DIR$/MTKPerson.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MTKProximitySensor.java" beforeDir="false" afterPath="$PROJECT_DIR$/MTKProximitySensor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MTKPublisher.java" beforeDir="false" afterPath="$PROJECT_DIR$/MTKPublisher.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MTKScreenSharingPermUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/MTKScreenSharingPermUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MTKSubscriber.java" beforeDir="false" afterPath="$PROJECT_DIR$/MTKSubscriber.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MTKTransactionType.java" beforeDir="false" afterPath="$PROJECT_DIR$/MTKTransactionType.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MTKTransactionUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/MTKTransactionUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MTKUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/MTKUtil.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MTKVideoChatClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/MTKVideoChatClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MTKVideoChatSession.java" beforeDir="false" afterPath="$PROJECT_DIR$/MTKVideoChatSession.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MediaProjectionCallback.java" beforeDir="false" afterPath="$PROJECT_DIR$/MediaProjectionCallback.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -32,45 +16,24 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/MTKVideoChatClient.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="528">
-              <caret line="24" column="27" lean-forward="true" selection-start-line="24" selection-start-column="27" selection-end-line="24" selection-end-column="27" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/MTKVideoChatSession.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="88">
-              <caret line="4" column="29" selection-start-line="4" selection-start-column="29" selection-end-line="4" selection-end-column="29" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Log.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="154">
+            <state relative-caret-position="176">
               <caret line="14" column="26" selection-start-line="14" selection-start-column="26" selection-end-line="14" selection-end-column="26" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/MediaProjectionCallback.java">
+        <entry file="file://$PROJECT_DIR$/MTKConst.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="110">
-              <caret line="5" column="38" selection-start-line="5" selection-start-column="38" selection-end-line="5" selection-end-column="38" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state relative-caret-position="660">
+              <caret line="30" lean-forward="true" selection-start-line="30" selection-end-line="30" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MTKPublisher.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="430">
@@ -79,51 +42,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/MTKConst.java">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/MTKVideoChatClient.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="506">
-              <caret line="23" column="65" lean-forward="true" selection-start-line="23" selection-start-column="65" selection-end-line="23" selection-end-column="65" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/MTKSubscriber.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/MTKTransactionType.java">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/MTKTransactionUtil.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret lean-forward="true" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/MTKUtil.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="386">
-              <caret line="24" column="35" selection-start-line="24" selection-start-column="26" selection-end-line="24" selection-end-column="35" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state relative-caret-position="682">
+              <caret line="31" column="23" lean-forward="true" selection-start-line="30" selection-start-column="21" selection-end-line="31" selection-end-column="23" />
             </state>
           </provider>
         </entry>
@@ -152,9 +75,9 @@
       <find>MalformedURLException</find>
       <find>Log</find>
       <find>printJSON</find>
-      <find>ROOM_TYPE_INTERVIEW</find>
       <find>REQUEST</find>
       <find>REQUEST_SCREEN_SHARING</find>
+      <find>ROOM_TYPE_INTERVIEW</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -167,7 +90,6 @@
         <option value="$PROJECT_DIR$/Log.java" />
         <option value="$PROJECT_DIR$/MTKAudioManager.java" />
         <option value="$PROJECT_DIR$/MTKBluetoothManager.java" />
-        <option value="$PROJECT_DIR$/MTKConst.java" />
         <option value="$PROJECT_DIR$/MTKDataStore.java" />
         <option value="$PROJECT_DIR$/MTKError.java" />
         <option value="$PROJECT_DIR$/MTKMediaServerConnector.java" />
@@ -182,14 +104,15 @@
         <option value="$PROJECT_DIR$/MTKUtil.java" />
         <option value="$PROJECT_DIR$/MTKVideoChatClient.java" />
         <option value="$PROJECT_DIR$/MTKVideoChatSession.java" />
+        <option value="$PROJECT_DIR$/MTKConst.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-11" />
-    <option name="y" value="-11" />
-    <option name="width" value="3863" />
-    <option name="height" value="2123" />
+    <option name="x" value="-12" />
+    <option name="y" value="-12" />
+    <option name="width" value="3864" />
+    <option name="height" value="2124" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -361,30 +284,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MTKVideoChatSession.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="88">
-          <caret line="4" column="29" selection-start-line="4" selection-start-column="29" selection-end-line="4" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Log.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="14" column="26" selection-start-line="14" selection-start-column="26" selection-end-line="14" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/MediaProjectionCallback.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="110">
-          <caret line="5" column="38" selection-start-line="5" selection-start-column="38" selection-end-line="5" selection-end-column="38" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/MTKUtil.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="386">
@@ -395,17 +294,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MTKVideoChatClient.java">
+    <entry file="file://$PROJECT_DIR$/MediaProjectionCallback.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="528">
-          <caret line="24" column="27" lean-forward="true" selection-start-line="24" selection-start-column="27" selection-end-line="24" selection-end-column="27" />
+        <state relative-caret-position="66">
+          <caret line="5" selection-start-line="5" selection-end-line="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MTKVideoChatSession.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="88">
+          <caret line="4" column="29" selection-start-line="4" selection-start-column="29" selection-end-line="4" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Log.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="14" column="26" selection-start-line="14" selection-start-column="26" selection-end-line="14" selection-end-column="26" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/MTKConst.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="506">
-          <caret line="23" column="65" lean-forward="true" selection-start-line="23" selection-start-column="65" selection-end-line="23" selection-end-column="65" />
+        <state relative-caret-position="660">
+          <caret line="30" lean-forward="true" selection-start-line="30" selection-end-line="30" />
         </state>
       </provider>
     </entry>
@@ -413,6 +326,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="430">
           <caret line="44" column="76" lean-forward="true" selection-start-line="44" selection-start-column="76" selection-end-line="44" selection-end-column="76" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MTKVideoChatClient.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="682">
+          <caret line="31" column="23" lean-forward="true" selection-start-line="30" selection-start-column="21" selection-end-line="31" selection-end-column="23" />
         </state>
       </provider>
     </entry>
