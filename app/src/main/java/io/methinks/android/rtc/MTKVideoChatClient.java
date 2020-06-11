@@ -99,7 +99,7 @@ public class MTKVideoChatClient {
             DefaultVideoEncoderFactory defaultVideoEncoderFactory = new DefaultVideoEncoderFactory(MTKDataStore.getInstance().eglBase.getEglBaseContext(), true, true);
             DefaultVideoDecoderFactory defaultVideoDecoderFactory = new DefaultVideoDecoderFactory(MTKDataStore.getInstance().eglBase.getEglBaseContext());
 
-            if(MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_BUSINESS)){
+            if(MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_THINKER)){
                 MTKDataStore.getInstance().pcFactory = PeerConnectionFactory.builder()
                         .setVideoEncoderFactory(defaultVideoEncoderFactory)
                         .setVideoDecoderFactory(defaultVideoDecoderFactory)
@@ -124,7 +124,7 @@ public class MTKVideoChatClient {
         janus = client.newWebSocket(request, janusListener);
         if(!MTKDataStore.getInstance().roomType.equals(MTKConst.ROOM_TYPE_APP_TEST)){
             audioManager = MTKAudioManager.create(MTKDataStore.getInstance().context);
-            if(MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_BUSINESS)) {
+            if(MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_THINKER)) {
                 audioManager.start(new MTKAudioManager.AudioManagerEvents() {
                     @Override
                     public void onAudioDeviceChanged(MTKAudioManager.AudioDevice selectedAudioDevice, Set<MTKAudioManager.AudioDevice> availableAudioDevices) {
@@ -241,7 +241,7 @@ public class MTKVideoChatClient {
             subscriber.audioTrack = null;
         }
 
-        if (MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_BUSINESS) && subscriber != null) {
+        if (MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_THINKER) && subscriber != null) {
             if (subscriber.pcClient != null) {
                 if (subscriber.pcClient.peerConnection != null) {
                     subscriber.pcClient.peerConnection.close();
@@ -358,7 +358,7 @@ public class MTKVideoChatClient {
                         }else if(receivedCommand.equals("hangup")){
                             MTKSubscriber subscriber = MTKUtil.getSubscriberFromHandleId(senderHandleId);
                             if(subscriber != null){
-                                if (MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_BUSINESS)) {
+                                if (MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_THINKER)) {
                                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                                         @Override
                                         public void run() {
@@ -449,7 +449,7 @@ public class MTKVideoChatClient {
     private Timer mTimer;
     private void sendKeepAlive(MTKVideoChatSession session){
         Log.d("Start keepAlive call");
-        if (MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_BUSINESS)) {
+        if (MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_THINKER)) {
             new Thread(() -> {
                 while (keepAlives.get(session.sessionId)) {
                     try {

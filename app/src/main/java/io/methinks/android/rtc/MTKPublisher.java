@@ -256,7 +256,7 @@ public class MTKPublisher extends MTKPerson{
             rtcConfig.sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN;
             boolean enableDataChannel = videoType == StreamVideoType.camera;
             Log.e("enableDataChannel check : " + enableDataChannel);
-            if (MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_BUSINESS)) {
+            if (MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_THINKER)) {
                 MTKPublisher.this.pcClient = new MTKPeerConnectionClient(MTKDataStore.getInstance().context, MTKDataStore.getInstance().pcFactory, rtcConfig, MTKPublisher.this.session, enableDataChannel) {
                     @Override
                     public void onIceCandidate(IceCandidate iceCandidate) {
