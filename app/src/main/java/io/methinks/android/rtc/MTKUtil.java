@@ -177,7 +177,7 @@ public class MTKUtil {
     }
 
     protected static String getRoleForSubscriber(JSONObject data){
-        Log.e("subscribers count", "subscribers count role check : " + data.toString());
+        Log.e("subscribers count role check : " + data.toString());
         try {
             if(data == null){
                 return "";

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,9 +35,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import io.methinks.android.mtkrtc.MTKAudioManager.AudioDevice;
-import io.methinks.android.mtkrtc.MTKAudioManager.AudioManagerEvents;
-
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -47,7 +43,7 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
-import static io.methinks.android.mtkrtc.MTKError.Domain.SessionErrorDomain;
+import static io.methinks.android.rtc.MTKError.Domain.SessionErrorDomain;
 
 public class MTKVideoChatClient {
     private static final String TAG = MTKVideoChatClient.class.getSimpleName();
@@ -449,7 +445,7 @@ public class MTKVideoChatClient {
         }
     };
 
-    private mTimer
+    private mTimer;
     private void sendKeepAlive(MTKVideoChatSession session){
         Log.d("Start keepAlive call");
         if (MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_BUSINESS)) {
