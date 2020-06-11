@@ -1,9 +1,9 @@
-package io.methinks.android.mtkrtc;
+package io.methinks.android.rtc;
 
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
+import android.support.annotation.Nullable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,9 +35,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import io.methinks.android.mtkrtc.MTKAudioManager.AudioDevice;
-import io.methinks.android.mtkrtc.MTKAudioManager.AudioManagerEvents;
-
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -46,7 +43,8 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
-import static io.methinks.android.mtkrtc.MTKError.Domain.SessionErrorDomain;
+/** these should be changed by baseFeature ( android.rtc.MTKError / android.mtkrtc.MTKError )*/
+import static io.methinks.android.rtc.MTKError.Domain.SessionErrorDomain;
 
 public class MTKVideoChatClient {
     private static final String TAG = MTKVideoChatClient.class.getSimpleName();
@@ -127,9 +125,9 @@ public class MTKVideoChatClient {
         if(!MTKDataStore.getInstance().roomType.equals(MTKConst.ROOM_TYPE_APP_TEST)){
             audioManager = MTKAudioManager.create(MTKDataStore.getInstance().context);
             if(MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_BUSINESS)) {
-                audioManager.start(new AudioManagerEvents() {
+                audioManager.start(new MTKAudioManager.AudioManagerEvents() {
                     @Override
-                    public void onAudioDeviceChanged(AudioDevice selectedAudioDevice, Set<AudioDevice> availableAudioDevices) {
+                    public void onAudioDeviceChanged(MTKAudioManager.AudioDevice selectedAudioDevice, Set<MTKAudioManager.AudioDevice> availableAudioDevices) {
                         Log.e("onAudioManagerDevicesChanged: " + availableAudioDevices + ", " + "selected: " + selectedAudioDevice);
                     }
                 });
@@ -298,7 +296,7 @@ public class MTKVideoChatClient {
                         String transactionId = receivedJson.getString("transaction");
                         JSONObject savedJson = MTKTransactionUtil.getTransactionData(transactionId);
                         if(savedJson != null) {
-                            MTKUtil.printJSON("received transaction data", savedJson);
+                            MTKUtil.printJSON("", "received transaction data", savedJson);
                             String savedCommand = savedJson.getString("janus");
                             if (receivedCommand.equals(MTKTransactionType.ack.name())) { // received ack
                                 MTKTransactionUtil.removeTransaction(transactionId);
@@ -448,7 +446,7 @@ public class MTKVideoChatClient {
         }
     };
 
-    private mTimer
+    private Timer mTimer;
     private void sendKeepAlive(MTKVideoChatSession session){
         Log.d("Start keepAlive call");
         if (MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_BUSINESS)) {
@@ -531,32 +529,32 @@ public class MTKVideoChatClient {
         }
 
         public Builder context(Context val) {
-            context = checkNotNull(val, "context is null");
+            context = val;
             return this;
         }
 
         public Builder bucket(String val){
-            bucket = checkNotNull(val, "bucket is null");
+            bucket = val;
             return this;
         }
 
         public Builder userId(String val) {
-            userId = checkNotNull(val, "userId is null");
+            userId = val;
             return this;
         }
 
         public Builder userName(String val) {
-            userName = checkNotNull(val, "userName is null");
+            userName = val;
             return this;
         }
 
         public Builder profilePicURL(String val) {
-            profilePicURL = checkNotNull(val, "profilePicURL is null");
+            profilePicURL = val;
             return this;
         }
 
         public Builder projectId(String val) {
-            projectId = checkNotNull(val, "projectId is null");
+            projectId = val;
             return this;
         }
 
@@ -566,12 +564,12 @@ public class MTKVideoChatClient {
         }
 
         public Builder roomPin(String val) {
-            roomPin = checkNotNull(val, "roomPin is null");
+            roomPin = val;
             return this;
         }
 
         public Builder apiToken(String val) {
-            apiToken = checkNotNull(val, "apiToken is null");
+            apiToken = val;
             return this;
         }
 
@@ -580,7 +578,7 @@ public class MTKVideoChatClient {
             return this;
         }
         public Builder socketURL(String val) {
-            socketURL = checkNotNull(val, "socketURL is null");
+            socketURL = val;
             return this;
         }
 
@@ -590,32 +588,32 @@ public class MTKVideoChatClient {
         }
 
         public Builder targetServer(String val) {
-            targetServer = checkNotNull(val, "targetServer is null");
+            targetServer = val;
             return this;
         }
 
         public Builder eglBase(EglBase val) {
-            eglBase = checkNotNull(val, "eglBase is null");
+            eglBase = val;
             return this;
         }
 
         public Builder roomType(String val) {
-            roomType = checkNotNull(val, "roomType is null");
+            roomType = val;
             return this;
         }
 
         public Builder roomToken(String val) {
-            roomToken = checkNotNull(val, "roomToken is null");
+            roomToken = val;
             return this;
         }
 
         public Builder secret(String val){
-            secret = checkNotNull(val, "secret is null");
+            secret = val;
             return this;
         }
 
         public Builder listener(MTKRTCClientListener val){
-            listener = checkNotNull(val, "MTKRTCClientListener is null");
+            listener = val;
             return this;
         }
 
@@ -625,17 +623,17 @@ public class MTKVideoChatClient {
         }
 
         public Builder iceServers(ArrayList<PeerConnection.IceServer> val) {
-            iceServers = checkNotNull(val, "iceServers is null");
+            iceServers = val;
             return this;
         }
 
         public Builder sId(String val){
-            sId = checkNotNull(val, "sId is null");
+            sId = val;
             return this;
         }
 
         public Builder baseFeature(String val) {
-            baseFeature = checkNotNull(val, "baseFeature is null");
+            baseFeature = val;
             return this;
         }
 

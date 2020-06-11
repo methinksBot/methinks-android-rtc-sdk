@@ -1,4 +1,4 @@
-package io.methinks.android.mtkrtc;
+package io.methinks.android.rtc;
 
 import android.app.Activity;
 import android.content.Context;

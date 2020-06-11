@@ -1,4 +1,4 @@
-package io.methinks.android.mtkrtc;
+package io.methinks.android.rtc;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -41,11 +41,14 @@ import org.webrtc.VideoSource;
 
 import java.util.List;
 
-import static io.methinks.android.ui.interview.video.MTKVideoInterviewActivity.REQUEST_SCREEN_SHARING;
-import static io.methinks.android.ui.interview.video.MTKVideoInterviewActivity.REQUEST_WEB_SHARING;
-import static io.methinks.android.mtkrtc.MTKError.ErrorCode.PublisherInternalError;
-import static io.methinks.android.mtkrtc.MTKError.ErrorCode.PublisherUnableToPublish;
-import static io.methinks.android.mtkrtc.MTKError.ErrorCode.PublisherWebRTCError;
+/** these should be changed by baseFeature ( android.rtc.MTKError / android.mtkrtc.MTKError )*/
+import static io.methinks.android.rtc.MTKError.ErrorCode.PublisherInternalError;
+import static io.methinks.android.rtc.MTKError.ErrorCode.PublisherUnableToPublish;
+import static io.methinks.android.rtc.MTKError.ErrorCode.PublisherWebRTCError;
+import static io.methinks.android.rtc.MTKConst.ROOM_TYPE_APP_TEST;
+import static io.methinks.android.rtc.MTKConst.ROOM_TYPE_INTERVIEW;
+import static io.methinks.android.rtc.MTKConst.REQUEST_SCREEN_SHARING;
+import static io.methinks.android.rtc.MTKConst.REQUEST_WEB_SHARING;
 
 public class MTKPublisher extends MTKPerson{
     private static final String TAG = MTKPublisher.class.getSimpleName();

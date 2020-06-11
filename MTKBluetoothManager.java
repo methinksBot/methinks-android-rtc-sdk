@@ -1,5 +1,4 @@
-package io.methinks.android.mtkrtc;
-
+package io.methinks.android.rtc;
 /*
  *  Copyright 2016 The WebRTC Project Authors. All rights reserved.
  *

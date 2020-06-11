@@ -1,4 +1,4 @@
-package io.methinks.android.mtkrtc;
+package io.methinks.android.rtc;
 
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -24,9 +24,7 @@ import org.webrtc.SdpObserver;
 import org.webrtc.SessionDescription;
 import org.webrtc.SurfaceViewRenderer;
 
-import io.methinks.android.R;
-
-import static io.methinks.android.mtkrtc.MTKError.ErrorCode.SubscriberWebRTCError;
+import static io.methinks.android.rtc.MTKError.ErrorCode.SubscriberWebRTCError;
 
 public class MTKSubscriber extends MTKPerson {
     private static final String TAG = MTKSubscriber.class.getSimpleName();

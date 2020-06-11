@@ -1,4 +1,4 @@
-package io.methinks.android.mtkrtc;
+package io.methinks.android.rtc;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -101,16 +101,16 @@ public class MTKAudioManager {
 
         // The proximity sensor should only be activated when there are exactly two
         // available audio devices.
-        if (audioDevices.size() == 2 && audioDevices.contains(MTKAudioManager.AudioDevice.EARPIECE)
-                && audioDevices.contains(MTKAudioManager.AudioDevice.SPEAKER_PHONE)) {
+        if (audioDevices.size() == 2 && audioDevices.contains(AudioDevice.EARPIECE)
+                && audioDevices.contains(AudioDevice.SPEAKER_PHONE)) {
             if (proximitySensor.sensorReportsNearState()) {
                 // Sensor reports that a "handset is being held up to a person's ear",
                 // or "something is covering the light sensor".
-                setAudioDeviceInternal(MTKAudioManager.AudioDevice.EARPIECE);
+                setAudioDeviceInternal(AudioDevice.EARPIECE);
             } else {
                 // Sensor reports that a "handset is removed from a person's ear", or
                 // "the light sensor is no longer covered".
-                setAudioDeviceInternal(MTKAudioManager.AudioDevice.SPEAKER_PHONE);
+                setAudioDeviceInternal(AudioDevice.SPEAKER_PHONE);
             }
         }
     }

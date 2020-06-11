@@ -1,4 +1,4 @@
-package io.methinks.android.mtkrtc;
+package io.methinks.android.rtc;
 
 public class MTKConst {
     public static final String TARGET_SERVER_DEV = "dev";
@@ -28,4 +28,7 @@ public class MTKConst {
 
     public static final String BASE_FEATURE_BUSINESS = "business_app";
     public static final String BASE_FEATURE_APPTEST = "apptest_sdk";
+
+    public static final int REQUEST_SCREEN_SHARING = 12322;
+    public static final int REQUEST_WEB_SHARING = 12312;
 }

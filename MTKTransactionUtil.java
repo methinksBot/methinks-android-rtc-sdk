@@ -1,4 +1,4 @@
-package io.methinks.android.mtkrtc;
+package io.methinks.android.rtc;
 
 import android.text.TextUtils;
 import android.util.Base64;
@@ -269,7 +269,7 @@ public class MTKTransactionUtil {
 
 
     protected static String requestConfigureForOffer(WebSocket socket, MTKVideoChatSession session, long handleId, SessionDescription sessionDescription){
-        Log.e("@#@#@#", "requestConfigureForOffer");
+        Log.e("requestConfigureForOffer");
         try {
             JSONObject json = new JSONObject();
             json.put("janus", MTKTransactionType.message.name());
@@ -298,7 +298,7 @@ public class MTKTransactionUtil {
     }
 
     protected static String requestConfigureForRecordingStart(WebSocket socket, MTKPublisher publisher, MTKVideoChatSession session, long handleId, boolean audioSend, boolean videoSend){
-        Log.e("@#@#@#", "requestConfigureForRecordingStart");
+        Log.e("requestConfigureForRecordingStart");
         try {
             StringBuilder sb = new StringBuilder();
             sb.append("/");
@@ -320,7 +320,7 @@ public class MTKTransactionUtil {
             }
 
             sb.append(new Date().getTime());
-            Log.e("MTKRTC", "Recording filename : " + sb.toString());
+            Log.e("Recording filename : " + sb.toString());
 
             JSONObject json = new JSONObject();
             json.put("janus", MTKTransactionType.message.name());
@@ -347,7 +347,7 @@ public class MTKTransactionUtil {
     }
 
     protected static String requestConfigureForRecordingStop(WebSocket socket, MTKVideoChatSession session, long handleId){
-        Log.e("@#@#@#", "requestConfigureForRecordingStop");
+        Log.e("requestConfigureForRecordingStop");
         try {
             JSONObject json = new JSONObject();
             json.put("janus", MTKTransactionType.message.name());
@@ -392,7 +392,7 @@ public class MTKTransactionUtil {
             }
 
             sb.append(new Date().getTime());
-            Log.e("MTKRTC", "Recording filename : " + sb.toString());
+            Log.e("Recording filename : " + sb.toString());
 
             JSONObject json = new JSONObject();
             json.put("janus", MTKTransactionType.message.name());
@@ -524,10 +524,10 @@ public class MTKTransactionUtil {
             json.put("token", MTKDataStore.getInstance().apiToken);
 
             if(!(json.has("janus") && json.getString("janus").equals("keepalive"))){
-                Log.e(TAG, "websocket send Message text : " + json);
+                Log.e("websocket send Message text : " + json);
             }
 
-            Log.e(TAG, "websocket protocol send : " + json.toString());
+            Log.e("websocket protocol send : " + json.toString());
 
             socket.send(json.toString());
             transactionMap.put(transactionId, json);

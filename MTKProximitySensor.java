@@ -1,5 +1,4 @@
-package io.methinks.android.mtkrtc;
-
+package io.methinks.android.rtc;
 
 import android.content.Context;
 import android.hardware.Sensor;
