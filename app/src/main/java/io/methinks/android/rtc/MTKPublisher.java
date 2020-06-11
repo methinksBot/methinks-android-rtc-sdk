@@ -41,8 +41,6 @@ import org.webrtc.VideoSource;
 
 import java.util.List;
 
-import static io.methinks.android.rtc.MTKConst.ROOM_TYPE_APP_TEST;
-import static io.methinks.android.rtc.MTKConst.ROOM_TYPE_INTERVIEW;
 import static io.methinks.android.ui.interview.video.MTKVideoInterviewActivity.REQUEST_SCREEN_SHARING;
 import static io.methinks.android.ui.interview.video.MTKVideoInterviewActivity.REQUEST_WEB_SHARING;
 import static io.methinks.android.mtkrtc.MTKError.ErrorCode.PublisherInternalError;
