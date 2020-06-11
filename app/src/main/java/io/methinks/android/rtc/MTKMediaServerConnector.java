@@ -65,9 +65,9 @@ public class MTKMediaServerConnector {
 
                 return json;
             } catch (MalformedURLException e) {
-                Log.e("Malformed image URL : " + URL, e);
+                Log.e("Malformed image URL : " + URL + e);
             } catch (IOException e) {
-                Log.e("Error fetching image from URL : " + URL, e);
+                Log.e("Error fetching image from URL : " + URL + e);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -126,9 +126,9 @@ public class MTKMediaServerConnector {
 
                 return json;
             } catch (MalformedURLException e) {
-                Log.e("Malformed image URL : " + URL, e);
+                Log.e("Malformed image URL : " + URL + e);
             } catch (IOException e) {
-                Log.e("Error fetching image from URL : " + URL, e);
+                Log.e("Error fetching image from URL : " + URL + e);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

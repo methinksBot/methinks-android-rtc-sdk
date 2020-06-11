@@ -43,7 +43,7 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
-import static android.support.v4.util.Preconditions.checkNotNull;
+/** these should be changed by baseFeature ( android.rtc.MTKError / android.mtkrtc.MTKError )*/
 import static io.methinks.android.rtc.MTKError.Domain.SessionErrorDomain;
 
 public class MTKVideoChatClient {
@@ -446,7 +446,7 @@ public class MTKVideoChatClient {
         }
     };
 
-    private mTimer;
+    private Timer mTimer;
     private void sendKeepAlive(MTKVideoChatSession session){
         Log.d("Start keepAlive call");
         if (MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_BUSINESS)) {
