@@ -63,7 +63,7 @@ class MTKPeerConnectionClient implements PeerConnection.Observer {
     }
 
     boolean isPublisher;
-    MTKPeerConnectionClient(Context context, PeerConnectionFactory factory, PeerConnection.RTCConfiguration config, MTKVideoChatSession session, boolean enableDataChannelr) {
+    MTKPeerConnectionClient(Context context, PeerConnectionFactory factory, PeerConnection.RTCConfiguration config, MTKVideoChatSession session, boolean enableDataChannel) {
         this.context = context;
         this.enableDataChannel = enableDataChannel;
         peerConnection = factory.createPeerConnection(config, this);
