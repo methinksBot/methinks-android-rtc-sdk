@@ -1,4 +1,4 @@
-package io.methinks.android.rtc;
+package io.methinks.thinker.rtc;
 
 public class Log {
     // subtree test
