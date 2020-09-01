@@ -41,11 +41,14 @@ import org.webrtc.VideoSource;
 
 import java.util.List;
 
-import static io.methinks.android.ui.interview.video.MTKVideoInterviewActivity.REQUEST_SCREEN_SHARING;
-import static io.methinks.android.ui.interview.video.MTKVideoInterviewActivity.REQUEST_WEB_SHARING;
-import static io.methinks.android.mtkrtc.MTKError.ErrorCode.PublisherInternalError;
-import static io.methinks.android.mtkrtc.MTKError.ErrorCode.PublisherUnableToPublish;
-import static io.methinks.android.mtkrtc.MTKError.ErrorCode.PublisherWebRTCError;
+/** these should be changed by baseFeature ( android.rtc.MTKError / android.mtkrtc.MTKError )*/
+import static io.methinks.android.rtc.MTKError.ErrorCode.PublisherInternalError;
+import static io.methinks.android.rtc.MTKError.ErrorCode.PublisherUnableToPublish;
+import static io.methinks.android.rtc.MTKError.ErrorCode.PublisherWebRTCError;
+import static io.methinks.android.rtc.MTKConst.ROOM_TYPE_APP_TEST;
+import static io.methinks.android.rtc.MTKConst.ROOM_TYPE_INTERVIEW;
+import static io.methinks.android.rtc.MTKConst.REQUEST_SCREEN_SHARING;
+import static io.methinks.android.rtc.MTKConst.REQUEST_WEB_SHARING;
 
 public class MTKPublisher extends MTKPerson{
     private static final String TAG = MTKPublisher.class.getSimpleName();
@@ -253,7 +256,7 @@ public class MTKPublisher extends MTKPerson{
             rtcConfig.sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN;
             boolean enableDataChannel = videoType == StreamVideoType.camera;
             Log.e("enableDataChannel check : " + enableDataChannel);
-            if (MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_BUSINESS)) {
+            if (MTKDataStore.getInstance().baseFeature.equals(MTKConst.BASE_FEATURE_THINKER)) {
                 MTKPublisher.this.pcClient = new MTKPeerConnectionClient(MTKDataStore.getInstance().context, MTKDataStore.getInstance().pcFactory, rtcConfig, MTKPublisher.this.session, enableDataChannel) {
                     @Override
                     public void onIceCandidate(IceCandidate iceCandidate) {
