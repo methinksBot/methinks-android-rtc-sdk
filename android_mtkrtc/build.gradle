@@ -1,11 +1,11 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     buildToolsVersion "29.0.2"
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -28,5 +28,5 @@ dependencies {
     implementation files('libs/libjingle_connection.jar')
     implementation files('libs/okhttp-3.9.1.jar')
     implementation files('libs/okio-1.17.4.jar')
-    compileOnly 'com.android.support:support-compat:27.0.2'
+    compileOnly 'com.android.support:support-compat:28.0.0'
 }
