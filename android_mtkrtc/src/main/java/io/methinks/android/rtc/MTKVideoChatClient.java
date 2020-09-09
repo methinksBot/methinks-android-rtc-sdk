@@ -231,6 +231,54 @@ public class MTKVideoChatClient {
         }
     }
 
+    public void unpublishPause(final MTKPublisher publisher){
+        if(publisher != null){
+            synchronized (this) {
+                if (publisher.pcClient != null && publisher.pcClient.peerConnection != null) {
+                    executor.execute(() -> {
+                        if (publisher.videoTrack != null){
+                            publisher.videoTrack.dispose();
+                            publisher.videoTrack = null;
+                        }
+                        if(publisher.audioTrack != null){
+                            publisher.audioTrack.dispose();
+                            publisher.audioTrack = null;
+                        }
+
+                        if (publisher.pcClient.peerConnection != null) {
+                            publisher.pcClient.peerConnection.close();
+                            publisher.pcClient.peerConnection = null;
+                        }
+
+                        if (publisher.pcClient != null) {
+                            if (publisher.pcClient.dataChannel != null) {
+                                publisher.pcClient.dataChannel.dispose();
+                            }
+                            publisher.pcClient.dataChannel = null;
+                            publisher.pcClient = null;
+                        }
+                    });
+                }
+            }
+        }
+    }
+
+    public void publishResume(MTKPublisher publisher){
+        if(MTKDataStore.getInstance().mainSession != null){
+            if(MTKDataStore.getInstance().mainPublisher == null){
+                MTKDataStore.getInstance().mainPublisher = publisher;
+                publisher.tempTransactionId = MTKTransactionUtil.attachPlugin(janus, MTKDataStore.getInstance().mainSession, MTKConst.PLUGIN_VIDEOROOM);
+                publisher.session = MTKDataStore.getInstance().mainSession;
+            }else if(MTKDataStore.getInstance().screenSharingPublisher == null){
+                MTKDataStore.getInstance().subSession = new MTKVideoChatSession();
+                MTKDataStore.getInstance().subSession.tempTansactionId = MTKTransactionUtil.createSession(janus);
+                MTKDataStore.getInstance().screenSharingPublisher = publisher;
+                publisher.session = MTKDataStore.getInstance().subSession;
+
+            }
+        }
+    }
+
     public void unsubscribe(MTKSubscriber subscriber){
         if(subscriber.videoTrack != null){
             subscriber.videoTrack.dispose();
