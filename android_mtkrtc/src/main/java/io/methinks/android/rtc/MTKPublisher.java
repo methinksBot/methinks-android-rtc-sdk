@@ -297,7 +297,7 @@ public class MTKPublisher extends MTKPerson{
                 isCamera = false;
             }
 
-            VideoSource videoSource = MTKDataStore.getInstance().pcFactory.createVideoSource(capturer.isScreencast());
+            VideoSource videoSource = MTKDataStore.getInstance().pcFactory.createVideoSource(offerCapturer.isScreencast());
             offerCapturer.initialize(helper, MTKDataStore.getInstance().context, videoSource.getCapturerObserver());
 
             int[] resolution = MTKUtil.getDeviceResolution();
