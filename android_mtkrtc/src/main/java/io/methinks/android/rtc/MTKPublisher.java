@@ -55,6 +55,7 @@ public class MTKPublisher extends MTKPerson{
     private static final String ME = "Me";
 
     protected VideoCapturer capturer;   // for camera
+    protected VideoCapturer offerCapturer;
     protected VideoSink screenCapturer; // for screen sharing
 
     protected boolean audioSend;
@@ -284,20 +285,20 @@ public class MTKPublisher extends MTKPerson{
             }
 
             boolean isCamera = false;
-            VideoCapturer capturer = null;
+            offerCapturer = null;
             SurfaceTextureHelper helper = null;
             if (publisher.videoType == StreamVideoType.camera) {
                 helper = SurfaceTextureHelper.create(MTKConst.THREAD_NAME_1, MTKDataStore.getInstance().eglBase.getEglBaseContext());
-                capturer = publisher.capturer;
+                offerCapturer = publisher.capturer;
                 isCamera = true;
             } else if(publisher.videoType == StreamVideoType.screen) {
                 helper = SurfaceTextureHelper.create(MTKConst.THREAD_NAME_2, MTKDataStore.getInstance().eglBase.getEglBaseContext());
-                capturer = (VideoCapturer) publisher.screenCapturer;
+                offerCapturer = (VideoCapturer) publisher.screenCapturer;
                 isCamera = false;
             }
 
             VideoSource videoSource = MTKDataStore.getInstance().pcFactory.createVideoSource(capturer.isScreencast());
-            capturer.initialize(helper, MTKDataStore.getInstance().context, videoSource.getCapturerObserver());
+            offerCapturer.initialize(helper, MTKDataStore.getInstance().context, videoSource.getCapturerObserver());
 
             int[] resolution = MTKUtil.getDeviceResolution();
             int fps = 15;
@@ -312,7 +313,7 @@ public class MTKPublisher extends MTKPerson{
                     resolution[0] = 1280;
                     resolution[1] = 720;
                 }
-                capturer.startCapture(resolution[0], resolution[1], fps);
+                offerCapturer.startCapture(resolution[0], resolution[1], fps);
 
             }else{ // portrait
                 if(resolution[1] > 1280){
@@ -321,9 +322,9 @@ public class MTKPublisher extends MTKPerson{
                 }
 
                 if(isCamera) {
-                    capturer.startCapture(resolution[1], resolution[0], fps);
+                    offerCapturer.startCapture(resolution[1], resolution[0], fps);
                 } else {
-                    capturer.startCapture(resolution[0], resolution[1], fps);
+                    offerCapturer.startCapture(resolution[0], resolution[1], fps);
                 }
             }
 

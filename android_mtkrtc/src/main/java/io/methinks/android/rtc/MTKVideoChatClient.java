@@ -233,49 +233,33 @@ public class MTKVideoChatClient {
 
     public void unpublishPause(final MTKPublisher publisher){
         if(publisher != null){
-            synchronized (this) {
-                if (publisher.pcClient != null && publisher.pcClient.peerConnection != null) {
-                    executor.execute(() -> {
-                        if (publisher.videoTrack != null){
-                            publisher.videoTrack.dispose();
-                            publisher.videoTrack = null;
-                        }
-                        if(publisher.audioTrack != null){
-                            publisher.audioTrack.dispose();
-                            publisher.audioTrack = null;
-                        }
+            try {
+                publisher.offerCapturer.stopCapture();
 
-                        if (publisher.pcClient.peerConnection != null) {
-                            publisher.pcClient.peerConnection.close();
-                            publisher.pcClient.peerConnection = null;
-                        }
-
-                        if (publisher.pcClient != null) {
-                            if (publisher.pcClient.dataChannel != null) {
-                                publisher.pcClient.dataChannel.dispose();
-                            }
-                            publisher.pcClient.dataChannel = null;
-                            publisher.pcClient = null;
-                        }
-                    });
-                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
 
     public void publishResume(MTKPublisher publisher){
-        if(MTKDataStore.getInstance().mainSession != null){
-            if(MTKDataStore.getInstance().mainPublisher == null){
-                MTKDataStore.getInstance().mainPublisher = publisher;
-                publisher.tempTransactionId = MTKTransactionUtil.attachPlugin(janus, MTKDataStore.getInstance().mainSession, MTKConst.PLUGIN_VIDEOROOM);
-                publisher.session = MTKDataStore.getInstance().mainSession;
-            }else if(MTKDataStore.getInstance().screenSharingPublisher == null){
-                MTKDataStore.getInstance().subSession = new MTKVideoChatSession();
-                MTKDataStore.getInstance().subSession.tempTansactionId = MTKTransactionUtil.createSession(janus);
-                MTKDataStore.getInstance().screenSharingPublisher = publisher;
-                publisher.session = MTKDataStore.getInstance().subSession;
+        int[] resolution = MTKUtil.getDeviceResolution();
+        int fps = 15;
 
+        if(resolution[0] >= resolution[1]){ // landscape
+            if(resolution[0] > 1280){
+                resolution[0] = 1280;
+                resolution[1] = 720;
             }
+            publisher.offerCapturer.startCapture(resolution[0], resolution[1], fps);
+
+        }else{ // portrait
+            if(resolution[1] > 1280){
+                resolution[1] = 1280;
+                resolution[0] = 720;
+            }
+            publisher.offerCapturer.startCapture(resolution[0], resolution[1], fps);
+
         }
     }
 
