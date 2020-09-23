@@ -85,6 +85,7 @@ public class MTKVideoChatClient {
         dataStore.url = builder.socketURL;
         dataStore.iceServers = builder.iceServers;
         dataStore.baseFeature = builder.baseFeature;
+        dataStore.mountpointInfo = builder.mountpointInfo;
 
         this.listener = builder.listener;
         this.keepAlives = new HashMap<>();
@@ -557,6 +558,7 @@ public class MTKVideoChatClient {
         private ArrayList<PeerConnection.IceServer> iceServers;
         private String sId; // for appTest
         private String baseFeature;
+        private JSONObject mountpointInfo;
 
         public Builder() {
         }
@@ -667,6 +669,11 @@ public class MTKVideoChatClient {
 
         public Builder baseFeature(String val) {
             baseFeature = val;
+            return this;
+        }
+
+        public Builder mountpointInfo(JSONObject val) {
+            mountpointInfo = val;
             return this;
         }
 

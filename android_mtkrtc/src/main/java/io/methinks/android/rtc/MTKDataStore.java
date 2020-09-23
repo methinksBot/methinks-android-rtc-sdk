@@ -3,6 +3,7 @@ package io.methinks.android.rtc;
 import android.content.Context;
 import android.media.projection.MediaProjection;
 
+import org.json.JSONObject;
 import org.webrtc.EglBase;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
@@ -49,6 +50,8 @@ public class MTKDataStore {
 
     protected String url;
     protected ArrayList<Integer> recordingPids;
+
+    protected JSONObject mountpointInfo;
 
     protected ArrayList<PeerConnection.IceServer> iceServers;
 
@@ -98,6 +101,7 @@ public class MTKDataStore {
         LazyHolder.INSTANCE.subscribers = null;
         LazyHolder.INSTANCE.recordingPids = null;
         LazyHolder.INSTANCE.iceServers = null;
+        LazyHolder.INSTANCE.mountpointInfo = null;
         this.subscribers = new ArrayList<>();
         this.recordingPids = new ArrayList<>();
     }
