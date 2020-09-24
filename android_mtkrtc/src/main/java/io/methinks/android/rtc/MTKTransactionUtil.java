@@ -458,7 +458,42 @@ public class MTKTransactionUtil {
         }
     }
 
-    protected static String startRTPForwarding(WebSocket socket, MTKPublisher publisher, MTKVideoChatSession session, int videoPort, int audioPort){
+    // rtp forwarding to mountpoint on current session.
+    protected static String startRTPForwarding(WebSocket socket, MTKPublisher publisher, MTKVideoChatSession session, JSONObject mountpointInfo){
+        try {
+            String host = mountpointInfo.getString("host");
+            int videoPort = mountpointInfo.getInt("video_port");
+            int videoRtcpPort = mountpointInfo.getInt("video_rtcp_port");
+            int audioPort = mountpointInfo.getInt("audio_port");
+            int dataPort = mountpointInfo.has("data_port") ? mountpointInfo.getInt("data_port") : 0;
+
+            JSONObject json = new JSONObject();
+            json.put("janus", MTKTransactionType.message.name());
+            json.put("session_id", session.sessionId);
+            json.put("handle_id", publisher.handleId);
+
+            JSONObject body = new JSONObject();
+            body.put("request", MTKTransactionType.MessageType.rtp_forward);
+            body.put("room", MTKDataStore.getInstance().roomId);
+            body.put("secret", MTKDataStore.getInstance().secret);
+            body.put("publisher_id", publisher.feedId);    // publisher feed id
+            body.put("video_port", videoPort);
+            body.put("video_rtcp_port", videoRtcpPort);
+            body.put("audio_port", audioPort);
+            body.put("host", host);    // media-server-2 -> Gstreamer
+            if (dataPort != 0)
+                body.put("data_port", 5005);
+
+            json.put("body", body);
+
+            return send(socket, json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    protected static String startRTPForwardingOV(WebSocket socket, MTKPublisher publisher, MTKVideoChatSession session, int videoPort, int audioPort){
         try {
             JSONObject json = new JSONObject();
             json.put("janus", MTKTransactionType.message.name());
