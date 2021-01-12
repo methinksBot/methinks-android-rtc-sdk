@@ -53,8 +53,6 @@ public class MTKDataStore {
 
     protected JSONObject mountpointInfo;
 
-    protected ArrayList<PeerConnection.IceServer> iceServers;
-
     private MTKDataStore(){
         this.subscribers = new ArrayList<>();
         this.recordingPids = new ArrayList<>();
@@ -100,7 +98,6 @@ public class MTKDataStore {
         LazyHolder.INSTANCE.screenSharingPublisher = null;
         LazyHolder.INSTANCE.subscribers = null;
         LazyHolder.INSTANCE.recordingPids = null;
-        LazyHolder.INSTANCE.iceServers = null;
         LazyHolder.INSTANCE.mountpointInfo = null;
         this.subscribers = new ArrayList<>();
         this.recordingPids = new ArrayList<>();

@@ -39,6 +39,7 @@ import org.webrtc.VideoCapturer;
 import org.webrtc.VideoSink;
 import org.webrtc.VideoSource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** these should be changed by baseFeature ( android.rtc.MTKError / android.mtkrtc.MTKError )*/
@@ -253,7 +254,10 @@ public class MTKPublisher extends MTKPerson{
         this.videoSend = videoSend;
 
         MTKVideoChatClient.executor.execute(() -> {
-            PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(MTKDataStore.getInstance().iceServers);
+            ArrayList<PeerConnection.IceServer> servers = new ArrayList<>();
+            servers.add(PeerConnection.IceServer.builder("stun:stun.l.google.com:19302").createIceServer());
+
+            PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(servers);
             rtcConfig.sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN;
             boolean enableDataChannel = videoType == StreamVideoType.camera;
             Log.e("enableDataChannel check : " + enableDataChannel);

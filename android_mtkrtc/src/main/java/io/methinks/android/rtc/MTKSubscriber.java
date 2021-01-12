@@ -24,6 +24,8 @@ import org.webrtc.SdpObserver;
 import org.webrtc.SessionDescription;
 import org.webrtc.SurfaceViewRenderer;
 
+import java.util.ArrayList;
+
 import static io.methinks.android.rtc.MTKError.ErrorCode.SubscriberWebRTCError;
 
 public class MTKSubscriber extends MTKPerson {
@@ -33,6 +35,8 @@ public class MTKSubscriber extends MTKPerson {
     protected String userId;
     protected String userName;
     protected String role;
+
+    PeerConnection.RTCConfiguration rtcConfig;
 
     public MTKSubscriber() {
         renderer = new SurfaceViewRenderer(MTKDataStore.getInstance().context);
@@ -128,7 +132,9 @@ public class MTKSubscriber extends MTKPerson {
             return;
         }
 
-        PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(MTKDataStore.getInstance().iceServers);
+        ArrayList<PeerConnection.IceServer> servers = new ArrayList<>();
+        servers.add(PeerConnection.IceServer.builder("stun:stun.l.google.com:19302").createIceServer());
+        rtcConfig = new PeerConnection.RTCConfiguration(servers);
         rtcConfig.sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN;
 
         boolean enableDataChannel = videoType == StreamVideoType.camera;

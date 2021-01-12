@@ -83,7 +83,6 @@ public class MTKVideoChatClient {
         dataStore.client = this;
         dataStore.useExtensionForWebSharing = builder.useExtensionForWebSharing;
         dataStore.url = builder.socketURL;
-        dataStore.iceServers = builder.iceServers;
         dataStore.baseFeature = builder.baseFeature;
         dataStore.mountpointInfo = builder.mountpointInfo;
 
@@ -555,7 +554,6 @@ public class MTKVideoChatClient {
         private String roomType;
         private MTKRTCClientListener listener;
         private boolean useExtensionForWebSharing;
-        private ArrayList<PeerConnection.IceServer> iceServers;
         private String sId; // for appTest
         private String baseFeature;
         private JSONObject mountpointInfo;
@@ -657,11 +655,6 @@ public class MTKVideoChatClient {
             return this;
         }
 
-        public Builder iceServers(ArrayList<PeerConnection.IceServer> val) {
-            iceServers = val;
-            return this;
-        }
-
         public Builder sId(String val){
             sId = val;
             return this;
@@ -700,7 +693,6 @@ public class MTKVideoChatClient {
                     ", listener=" + listener +
                     ", baseFeature='" + baseFeature + '\'' +
                     ", useExtensionForWebSharing=" + useExtensionForWebSharing +
-                    ", iceServers=" + iceServers +
                     '}';
         }
 
