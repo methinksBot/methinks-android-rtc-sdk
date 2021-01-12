@@ -25,7 +25,8 @@ android {
 
 dependencies {
     implementation fileTree(dir: "$buildDir/native-libs", include: 'native-libs.jar')
-    implementation files('libs/libjingle_connection.jar')
+    implementation "org.webrtc:google-webrtc:1.0.30039"
+    //implementation files('libs/libjingle_connection.jar')
     //implementation files('libs/okhttp-3.9.1.jar')
     implementation 'com.squareup.okhttp3:okhttp:3.9.1'
     //implementation files('libs/okio-1.17.4.jar')
